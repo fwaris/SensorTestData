@@ -1,6 +1,6 @@
 ﻿#r @"..\packages\FSharp.Data.2.1.0\lib\net40\FSharp.Data.dll"
 #load @"..\packages\FSharp.Charting.0.90.9\Fsharp.Charting.fsx"
-
+#load "KMeansClustering.fs"
 open FSharp.Data
 open System.IO
 
@@ -102,5 +102,91 @@ plot LinearAcceleration "Linear Acceleration" f
 plotW RotationVector "Rotation Vector" f
 plot RotationVector "Rotation Vector" f
 plot Gyroscope "Gyroscope" f
+*)
+let rng = System.Random()
+type Rec = {Sensor:int; X:float; Y:float; Z:float; Omega:float option}
+let X x = x.X
+let Y x = x.Y
+let Z x = x.Z
+let O x = x.Omega.Value
+
+let distance3 (s1:Rec) (s2:Rec) =
+    abs(s1.X - s2.X)
+    + abs(s1.Y - s2.Y)
+    + abs(s1.Z - s2.Z)
+
+let distance4 (s1:Rec) (s2:Rec) =
+    abs(s1.X - s2.X)
+    + abs(s1.Y - s2.Y)
+    + abs(s1.Z - s2.Z)
+    + abs(s1.Omega.Value - s2.Omega.Value)
+
+let records sensor = 
+     f.Rows
+     |> Seq.filter (fun r->r.Sensor=sensor) 
+     |> Seq.map (fun (x:TwistGame.Row)->{Sensor=x.Sensor; X=x.X; Y=x.Y;Z=x.Z;Omega=x.Omega})
+
+let avgCentroid3 current sample =
+    let size = Seq.length sample |> float
+    match size with
+    | 0. -> current
+    | _ ->
+        sample
+        |> Seq.reduce (fun v1 v2 -> {v1 with X=v1.X+v2.X; Y=v1.Y+v2.Y; Z=v1.Z+v2.Z})
+        |> fun e -> {e with X= float e.X/size;Y=e.Y/size;Z=e.Z/size}
+
+let avgCentroid4 current sample =
+    let size = Seq.length sample |> float
+    match size with
+    | 0. -> current
+    | _ ->
+        sample
+        |> Seq.reduce (fun v1 v2 -> {v1 with X=v1.X+v2.X; Y=v1.Y+v2.Y; Z=v1.Z+v2.Z; Omega=Some (v1.Omega.Value + v2.Omega.Value)})
+        |> fun e -> {e with X= float e.X/size;Y=e.Y/size;Z=e.Z/size; Omega=Some(e.Omega.Value/size)}
+
+let cluster3 numCentroids sensor (data:TwistGame)= 
+    let factory = KMeans.randomCentroids<Rec> rng
+    let d2 = records sensor
+    let centroids, classifier = KMeans.kmeans distance3 factory avgCentroid3 d2 numCentroids
+    centroids, classifier
+
+let cluster4 numCentroids sensor (data:TwistGame)= 
+    let factory = KMeans.randomCentroids<Rec> rng
+    let d2 = records sensor
+    let centroids, classifier = KMeans.kmeans distance4 factory avgCentroid4 d2 numCentroids
+    centroids, classifier
+
+let plotCluster title centroids data fx fy =
+    let data = data |> Seq.map (fun x -> fx x, fy x)
+    let centroids = centroids |> Seq.map (fun x -> fx x, fy x)
+    Chart.Combine 
+        [
+            Chart.Point(data,Name="Data")
+            Chart.Point(centroids,Name="Centroids",MarkerColor=System.Drawing.Color.IndianRed,MarkerSize=10)
+        ]
+    |> Chart.WithTitle title
+    |> Chart.WithLegend (Enabled=true)
+
+
+(*
+let csGyro,_ = cluster3 3 Gyroscope f
+plotCluster "Gyroscope X-Y" csGyro (records Gyroscope) X Y
+plotCluster "Gyroscope Y-Z" csGyro (records Gyroscope) Y Z
+plotCluster "Gyroscope Z-X" csGyro (records Gyroscope) Z X
+*)
+(*
+let csGravity,_ = cluster3 3 Gravity f
+plotCluster "Gravity X-Y" csGravity (records Gravity) X Y
+plotCluster "Gravity Y-Z" csGravity (records Gravity) Y Z
+plotCluster "Gravity Z-X" csGravity (records Gravity) Z X
+*)
+(*
+let csRV,_ = cluster4 3 RotationVector f
+plotCluster "RotationVector X-Y" csRV (records RotationVector) X Y
+plotCluster "RotationVector Y-Z" csRV (records RotationVector) Y Z
+plotCluster "RotationVector Z-X" csRV (records RotationVector) Z X
+plotCluster "RotationVector X-O" csRV (records RotationVector) X O
+plotCluster "RotationVector Y-O" csRV (records RotationVector) Y O
+plotCluster "RotationVector Z-O" csRV (records RotationVector) Z O
 *)
 
