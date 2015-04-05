@@ -8,28 +8,28 @@ type Parm =
     | I of      v:int       * min:int       * max:int
     | I64 of    v:int64     * min:int64     * max:int64
 
-type ParmTrend = {Parm:Parm; Slope:float}
 type Id = int
-type Topology = Square | Global
-type Individual = {Id:Id; Parms:Parm array; Fitness:float; KS:KnowledgeSource}
+type Topology   = LBest | Global
+type Knowledge  = Situational | Historical | Normative | Topgraphical | Domain | Other of string
+type Individual = {Id:Id; Parms:Parm array; Fitness:float; KS:Knowledge}
 and Fitness     = Parm array -> float
 and Population  = Individual array
-and KnowledgeSource = 
-    | Situational       of Individual list 
-    | Historical        of ParmTrend array
-    | Normative         of Parm array
-    | Topographical     of Tree<Parm>
-    | Domain            of Domain
-and Domain = {Acceptance:Individual->Domain; Influence:Individual->Individual}
-and KnowledgeDistribution = {Network:Population*Id->Individual array; Distribute:Population*BeliefSpace->Population}
-and BeliefSpace = Tree<KnowledgeSource> list
-and Acceptance  = Population * BeliefSpace -> Individual list
-and Influence   = Population * BeliefSpace -> Population
-and Update      = Individual list * BeliefSpace -> BeliefSpace
+and Network     = Population -> Id -> Individual array
+and BeliefSpace = KnowledgeSource Tree list
+and Acceptance  = BeliefSpace -> Population -> Individual list
+and Influence   = BeliefSpace -> Population -> Population
+and Update      = BeliefSpace -> Individual list -> BeliefSpace
+and KnowledgeDistribution   = BeliefSpace->Population->Population
+and KnowledgeSource         = {
+                                Type:Knowledge
+                                Acceptance:Individual->Individual option*KnowledgeSource
+                                Influence:Individual->Individual
+                               }
 
 type CA =
     {
         Population              : Population
+        Network                 : Network
         KnowlegeDistribution    : KnowledgeDistribution
         BeliefSpace             : BeliefSpace
         Acceptance              : Acceptance
