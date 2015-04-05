@@ -64,10 +64,10 @@
     <None Include="Recognize.fsx" />
     <None Include="TapTrain.fsx" />
     <Compile Include="CA.fs" />
-    <Compile Include="CAUtils.fs" />
-    <Compile Include="CAConstants.fs" />
-    <Compile Include="SituationalKS.fs" />
     <Compile Include="CARunner.fs" />
+    <Compile Include="CAConstants.fs" />
+    <Compile Include="CAUtils.fs" />
+    <Compile Include="BeliefSpace\SituationalKS.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Charting">
