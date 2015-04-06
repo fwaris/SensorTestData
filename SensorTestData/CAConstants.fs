@@ -1,3 +1,3 @@
 ﻿module CAConstants
 
-let max_examplars = 5
+let max_examplars = 2

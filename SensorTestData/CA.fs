@@ -13,18 +13,20 @@ type Topology   = LBest | Global
 type Knowledge  = Situational | Historical | Normative | Topgraphical | Domain | Other of string
 type Individual = {Id:Id; Parms:Parm array; Fitness:float; KS:Knowledge}
 and Fitness     = Parm array -> float
+and Comparator  = float -> float -> bool //compare two fitness values - true when 1st 'is better than' 2nd
 and Population  = Individual array
 and Network     = Population -> Id -> Individual array
 and BeliefSpace = KnowledgeSource Tree list
-and Acceptance  = BeliefSpace -> Population -> Individual list
+and Acceptance  = BeliefSpace -> Population -> Individual array
 and Influence   = BeliefSpace -> Population -> Population
 and Update      = BeliefSpace -> Individual list -> BeliefSpace
-and KnowledgeDistribution   = BeliefSpace->Population->Population
-and KnowledgeSource         = {
-                                Type:Knowledge
-                                Acceptance:Individual->Individual option*KnowledgeSource
-                                Influence:Individual->Individual
-                               }
+and KnowledgeDistribution = BeliefSpace -> Population -> Population
+and KnowledgeSource = 
+    {
+        Type:Knowledge
+        Accept:Individual array -> Individual array * KnowledgeSource
+        Influence:Individual -> Individual
+    }
 
 type CA =
     {
@@ -35,6 +37,7 @@ type CA =
         Acceptance              : Acceptance
         Influence               : Influence
         Fitness                 : Fitness
+        Comparator              : Comparator
     }
 
 type TimeStep = {CA:CA ; Best:Individual list; Count:int}

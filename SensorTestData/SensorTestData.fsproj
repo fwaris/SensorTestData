@@ -57,17 +57,18 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="KMeansClustering.fs" />
-    <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
     <None Include="Explore.fsx" />
     <None Include="Recognize.fsx" />
     <None Include="TapTrain.fsx" />
     <Compile Include="CA.fs" />
-    <Compile Include="CARunner.fs" />
     <Compile Include="CAConstants.fs" />
     <Compile Include="CAUtils.fs" />
     <Compile Include="BeliefSpace\SituationalKS.fs" />
+    <Compile Include="BeliefSpace\Normative.fs" />
+    <Compile Include="CARunner.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Charting">

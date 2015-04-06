@@ -31,25 +31,28 @@ let cross beliefSpaceInd popInd =
                 crossParms (beliefSpaceInd.Parms.[i], p))
     }
 
-let create() =
+let create comparator =
     let create (examplars:Individual list) fAccept fInfluence : KnowledgeSource =
         {
             Type        = Situational
-            Acceptance  = fAccept fInfluence examplars
+            Accept      = fAccept fInfluence examplars
             Influence   = fInfluence examplars
         }
 
-    let rec acceptance fInfluence prevExemplars (ind:Individual) =
+    let rec acceptance isBetter fInfluence prevExemplars (inds:Individual array) =
+        let ind = inds.[0] //assume best individual is first
         match prevExemplars with
-        | [] -> Some(ind),create [ind] acceptance fInfluence
-        | prevBest::rest when ind.Fitness > prevBest.Fitness -> 
-            let newExemplars = ind::prevExemplars |> List.truncate CAConstants.max_examplars
-            Some(ind), create newExemplars acceptance fInfluence
-        | xs -> None, create xs acceptance fInfluence
+        | [] -> [|ind|], create [ind] (acceptance isBetter) fInfluence
+        | prevBest::rest when isBetter ind.Fitness prevBest.Fitness -> 
+            let newExemplars = 
+                ind::prevExemplars 
+                |> List.truncate CAConstants.max_examplars
+            [|ind|], create newExemplars (acceptance isBetter) fInfluence
+        | xs -> [||], create xs (acceptance isBetter) fInfluence
     
     let influence exemplars (ind:Individual) =
         match exemplars with
         | [] -> ind
         | best::_ -> cross best ind
-        
-    create [] acceptance influence
+       
+    create [] (acceptance comparator) influence
