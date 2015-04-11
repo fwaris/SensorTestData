@@ -103,6 +103,53 @@ let createPop parms size kss =
                 }
     |]
 
+type Dir = Up | Down | Flat
+
+//add two parms
+let parmAdd p1 p2 = 
+    match p1, p2 with
+    | F(prevV,_,_),F(newV,mn,mx)        -> F(prevV + newV   ,mn,mx)
+    | F32(prevV,_,_),F32(newV,mn,mx)    -> F32(prevV + newV ,mn,mx)
+    | I(prevV,_,_),I(newV,mn,mx)        -> I(prevV + newV   ,mn,mx)
+    | I64(prevV,_,_),I64(newV,mn,mx)    -> I64(prevV + newV ,mn,mx)
+    | a,b -> failwithf "CAUtils: invalid combination of types for parmSum %A,%A" a b
+
+//Effectively newParm - oldParm
+let parmDiff newParm oldParm  = 
+    match oldParm, newParm with
+    | F(prevV,_,_),F(newV,mn,mx)        -> F(newV - prevV   ,mn,mx)
+    | F32(prevV,_,_),F32(newV,mn,mx)    -> F32(newV - prevV ,mn,mx)
+    | I(prevV,_,_),I(newV,mn,mx)        -> I(newV - prevV   ,mn,mx)
+    | I64(prevV,_,_),I64(newV,mn,mx)    -> I64(newV - prevV ,mn,mx)
+    | a,b -> failwithf "CAUtils: invalid combination of types for parmDiff %A,%A" a b
+
+//Effectively numerator / denominator
+let parmDiv numerator denominator  = 
+    try
+        let r = 
+            match numerator, denominator with
+            | F(n,_,_),F(d,_,_)        -> n / d
+            | F32(n,_,_),F32(d,_,_)    -> float n / float d
+            | I(n,_,_),I(d,_,_)        -> float n / float d
+            | I64(n,_,_),I64(d,_,_)    -> float n / float d
+            | a,b -> failwithf "CAUtils: invalid combination of types for parmDiv %A,%A" a b
+        Some r
+    with :? System.DivideByZeroException ->
+        None
+
+//Effectively numerator / denominator
+let parmToFloat = function
+    | F(v,_,_)   -> v
+    | F32(v,_,_) -> float v
+    | I(v,_,_)   -> float v
+    | I64(v,_,_) -> float v
+
+let epsilon = function
+    | F(_,mn,mx)    -> F(System.Double.Epsilon,mn,mx)
+    | F32(_,mn,mx)  -> F32(System.Single.Epsilon,mn,mx)
+    | I(_,mn,mx)    -> I(1,mn,mx)
+    | I64(_,mn,mx)  -> I64(1L,mn,mx)
+
 let l4bestNetwork (pop:Population) id = //return 4 'friends' from the ring
     let m2 = id - 2
     let m2 = if m2 < 0 then pop.Length + m2 else m2

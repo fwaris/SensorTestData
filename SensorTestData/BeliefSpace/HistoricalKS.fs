@@ -2,8 +2,6 @@
 open CA
 open CAUtils
 
-type Dir = Up | Down | Flat
-
 //determine direction of change
 let dir newParm prevParm = 
     match prevParm,newParm with
@@ -20,24 +18,6 @@ let dir newParm prevParm =
     | I64(prevV,_,_),I64(newV,_,_)  when newV < prevV   -> Down
     | I64(prevV,_,_),I64(newV,_,_)                      -> Flat
     | a,b -> failwithf "HistoricalKS: invalid combination of types for dir %A,%A" a b
-
-//add two parms
-let parmSum p1 p2 = 
-    match p1, p2 with
-    | F(prevV,_,_),F(newV,mn,mx)        -> F(prevV + newV   ,mn,mx)
-    | F32(prevV,_,_),F32(newV,mn,mx)    -> F32(prevV + newV ,mn,mx)
-    | I(prevV,_,_),I(newV,mn,mx)        -> I(prevV + newV   ,mn,mx)
-    | I64(prevV,_,_),I64(newV,mn,mx)    -> I64(prevV + newV ,mn,mx)
-    | a,b -> failwithf "HistoricalKS: invalid combination of types for parmSum %A,%A" a b
-
-//Effectively newParm - oldParm
-let parmDiff newParm oldParm  = 
-    match oldParm, newParm with
-    | F(prevV,_,_),F(newV,mn,mx)        -> F(newV - prevV   ,mn,mx)
-    | F32(prevV,_,_),F32(newV,mn,mx)    -> F32(newV - prevV ,mn,mx)
-    | I(prevV,_,_),I(newV,mn,mx)        -> I(newV - prevV   ,mn,mx)
-    | I64(prevV,_,_),I64(newV,mn,mx)    -> I64(newV - prevV ,mn,mx)
-    | a,b -> failwithf "HistoricalKS: invalid combination of types for parmDiff %A,%A" a b
 
 let parmAvg count = function
     | F(v,_,_)      -> float v / float count

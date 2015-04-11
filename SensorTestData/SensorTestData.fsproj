@@ -68,6 +68,7 @@
     <Compile Include="BeliefSpace\SituationalKS.fs" />
     <Compile Include="BeliefSpace\NormativeKS.fs" />
     <Compile Include="BeliefSpace\HistoricalKS.fs" />
+    <Compile Include="BeliefSpace\DomainKS.fs" />
     <Compile Include="CARunner.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

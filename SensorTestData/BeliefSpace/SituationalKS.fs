@@ -2,7 +2,7 @@
 open CA
 open CAUtils
 
-let create isBetter maxExamplars =
+let create isBetter maxExemplars =
     let create (examplars:Individual list) fAccept fInfluence : KnowledgeSource =
         {
             Type        = Situational
@@ -17,7 +17,7 @@ let create isBetter maxExamplars =
         | prevBest::rest when isBetter ind.Fitness prevBest.Fitness -> 
             let newExemplars = 
                 ind::prevExemplars 
-                |> List.truncate maxExamplars
+                |> List.truncate maxExemplars
             [|ind|], create newExemplars acceptance fInfluence
         | xs -> [||], create xs acceptance fInfluence
     
