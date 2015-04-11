@@ -9,16 +9,16 @@ let knowledgeSources beliefSpace =
         | Node(ks,children)::rest -> loop (loop (ks::acc) children) rest
     loop [] beliefSpace
         
-let randI (rnd:System.Random) min max = rnd.Next(min,max)
-let randF32 (rnd:System.Random) (min:float32) (max:float32) =  min + (float32 ((rnd.NextDouble()) * float (max - min)))
-let randF (rnd:System.Random)  min max = min + (rnd.NextDouble() * (max - min))
-let randI64 (rnd:System.Random) min max =  min + (int64 ((rnd.NextDouble()) * float (max - min)))
+let randI min max = rnd.Next(min,max)
+let randF32 (min:float32) (max:float32) =  min + (float32 ((rnd.NextDouble()) * float (max - min)))
+let randF  min max = min + (rnd.NextDouble() * (max - min))
+let randI64 min max =  min + (int64 ((rnd.NextDouble()) * float (max - min)))
 (*
 let rnd = System.Random()
-[for i in 1..100 -> randI rnd 1 1000]
-[for i in 1..100 -> randF32 rnd 1.f 1000.f]
-[for i in 1..100 -> randF rnd 1000. 1000000.]
-[for i in 1..100 -> randI64 rnd 1000L 1000000L]
+[for i in 1..100 -> randI 1 1000]
+[for i in 1..100 -> randF32 1.f 1000.f]
+[for i in 1..100 -> randF 1000. 1000000.]
+[for i in 1..100 -> randI64 1000L 1000000L]
 *)   
 
 //Box-Muller method
@@ -37,26 +37,62 @@ let rnd = System.Random()
 [for i in 0..100 -> gaussian (float 50.) 1.]
 *)
 
-let randomize (rnd:System.Random) = function
-    | F (v,mn,mx)    -> F (randF rnd mn mx, mn, mx)
-    | F32 (v,min,mx) -> F32 (randF32 rnd min mx, min, mx)
-    | I (v,min,mx)   -> I(randI rnd min mx, min, mx)
-    | I64 (v,min,mx) -> I64(randI64 rnd min mx, min, mx)
+let randomize = function
+    | F (v,mn,mx)    -> F (randF mn mx, mn, mx)
+    | F32 (v,min,mx) -> F32 (randF32 min mx, min, mx)
+    | I (v,min,mx)   -> I(randI min mx, min, mx)
+    | I64 (v,min,mx) -> I64(randI64 min mx, min, mx)
 
 let clamp mn mx x = max (min x mx) mn
 
-let evolveS (rnd:System.Random) = function
-    | F (v,mn,mx)    -> F   (gaussian v 1.                      |> clamp mn mx , mn, mx)
-    | F32 (v,mn,mx)  -> F32 (gaussian (float v) 1. |> float32   |> clamp mn mx  , mn, mx)
+let evolveS = function
+    | F (v,mn,mx)    -> F   (gaussian v 1.                      |> clamp mn mx, mn, mx)
+    | F32 (v,mn,mx)  -> F32 (gaussian (float v) 1. |> float32   |> clamp mn mx, mn, mx)
     | I (v,mn,mx)    -> I   (gaussian (float v) 1. |> int       |> clamp mn mx, mn, mx)
     | I64 (v,mn,mx)  -> I64 (gaussian (float v) 1. |> int64     |> clamp mn mx, mn, mx)
+
+///Use values from the 2nd parm to influence 1st parm
+///(randomly move towards 2nd parm value)
+let influenceParm influenced influencer =
+    match influencer,influenced with
+    | F(pV,mn,mx),F(iV,_,_) when pV > iV     -> F(randF iV pV,mn,mx)
+    | F(pV,mn,mx),F(iV,_,_) when pV < iV     -> F(randF pV iV,mn,mx)
+    | F(_),fInd                              -> evolveS fInd
+
+    | F32(pV,mn,mx),F32(iV,_,_) when pV > iV -> F32(randF32 iV pV,mn,mx)
+    | F32(pV,mn,mx),F32(iV,_,_) when pV < iV -> F32(randF32 pV iV,mn,mx)
+    | F32(_),fInd                            -> evolveS fInd
+
+    | I(pV,mn,mx),I(iV,_,_) when pV > iV     -> I(randI iV pV,mn,mx)
+    | I(pV,mn,mx),I(iV,_,_) when pV < iV     -> I(randI pV iV,mn,mx)
+    | I(_),fInd                              -> evolveS fInd
+
+    | I64(pV,mn,mx),I64(iV,_,_) when pV > iV -> I64(randI64 iV pV,mn,mx)
+    | I64(pV,mn,mx),I64(iV,_,_) when pV < iV -> I64(randI64 pV iV,mn,mx)
+    | I64(_),fInd                            -> evolveS fInd
+
+    | a,b -> failwithf "two pop individual parameters not matched %A %A" a b
+
+///influenced indivual's parameters are modified 
+///to move them towards the influencer's parameters
+let influenceInd influenced influencer =
+    {influenced with
+        Parms = (influenced.Parms,influencer.Parms) ||> Array.map2 influenceParm
+    }
+
+///influenced indivual's parameters are modified 
+///to move them towards the influencer's parameters
+let evolveInd individual =
+    {individual with
+        Parms = individual.Parms |> Array.map evolveS
+    }
 
 let createPop parms size kss =
     let kss = Seq.toArray kss
     let rnd = System.Random()
     [|
         for i in 0..size-1 do
-            let rndParms = parms |> Array.map (randomize rnd)
+            let rndParms = parms |> Array.map randomize
             yield
                 {
                     Id      = i

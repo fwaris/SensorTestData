@@ -1,4 +1,4 @@
-﻿module Normative
+﻿module NormativeKS
 open CA
 open CAUtils
 
@@ -89,17 +89,15 @@ let updateNorms isBetter norms highPerfInd =
             }
     )
 
-
-let influenceParm {ParmLo=pLo; ParmHi=pHi} parm = 
-    if isLower (pLo,parm) && isHigher(pHi,parm) then evolveS rnd parm
+let normalizeParm {ParmLo=pLo; ParmHi=pHi} parm = 
+    if isLower (pLo,parm) && isHigher(pHi,parm) then evolveS parm
     else
         match parm,pLo,pHi with
-        | F(_,mn,mx),Fr(l),Fr(h)        -> F(   randF rnd l h ,mn,mx)
-        | F32(_,mn,mx),Fr32(l),Fr32(h)  -> F32( randF32 rnd l h ,mn,mx)
-        | I(_,mn,mx),Ir(l),Ir(h)        -> I(   randI rnd l h ,mn,mx)
-        | I64(_,mn,mx),Ir64(l),Ir64(h)  -> I64( randI64 rnd l h ,mn,mx)
+        | F(_,mn,mx),Fr(l),Fr(h)        -> F(   randF l h ,mn,mx)
+        | F32(_,mn,mx),Fr32(l),Fr32(h)  -> F32( randF32 l h ,mn,mx)
+        | I(_,mn,mx),Ir(l),Ir(h)        -> I(   randI l h ,mn,mx)
+        | I64(_,mn,mx),Ir64(l),Ir64(h)  -> I64( randI64 l h ,mn,mx)
         | a,b,c -> failwithf "Normative: norm-parameter type mismatch %A,%A,%A" a b c
-
 
 let create parms isBetter =
     let create (norms:Norm array) fAccept fInfluence : KnowledgeSource =
@@ -109,24 +107,22 @@ let create parms isBetter =
             Influence   = fInfluence norms
         }
 
-    let rec acceptance isBetter fInfluence norms (inds:Individual array) =
+    let rec acceptance fInfluence norms (inds:Individual array) =
         //assumes that individuals are sorted best fitness first
         let updatedNorms = inds |> Array.fold (updateNorms isBetter) norms
-        inds,create updatedNorms (acceptance isBetter) fInfluence 
-
-
+        inds,create updatedNorms acceptance fInfluence 
     
     let influence (norms:Norm array) (ind:Individual) =
         {ind with
-            Parms = ind.Parms |> Array.mapi (fun i p ->
-                influenceParm norms.[i] p)
+            Parms = (norms,ind.Parms) ||> Array.map2 normalizeParm
         }
         
-    let norms = parms |> Array.map (fun p -> 
+    let initialNorms = parms |> Array.map (fun p -> 
         {
             FitnessLo = if isBetter 1. 2. then System.Double.MaxValue else System.Double.MinValue
             ParmLo    = toRangeLo p
             FitnessHi = if isBetter 1. 2. then System.Double.MaxValue else System.Double.MinValue
             ParmHi    = toRangeHi p
         })
-    create norms (acceptance isBetter) influence
+
+    create initialNorms acceptance influence
