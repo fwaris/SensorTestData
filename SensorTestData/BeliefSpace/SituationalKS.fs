@@ -10,16 +10,25 @@ let create isBetter maxExemplars =
             Influence   = fInfluence examplars
         }
 
-    let rec acceptance fInfluence prevExemplars (inds:Individual array) =
-        let ind = inds.[0] //assume best individual is first
-        match prevExemplars with
-        | [] -> [|ind|], create [ind] acceptance fInfluence
-        | prevBest::rest when isBetter ind.Fitness prevBest.Fitness -> 
-            let newExemplars = 
-                ind::prevExemplars 
-                |> List.truncate maxExemplars
-            [|ind|], create newExemplars acceptance fInfluence
-        | xs -> [||], create xs acceptance fInfluence
+    let rec acceptance 
+        fInfluence 
+        (prevExemplars:Individual list) 
+        (inds:Individual array) =
+        match inds with
+        | [||] -> failwith "SituationalKS.acceptance : accepted individual list empty"
+        | inds ->
+            let rBest = inds.[0] //assume best individual is first for the latest genertion
+            let nBest = 
+                match prevExemplars with
+                | []                                                 -> Some rBest
+                | pBest::_ when isBetter rBest.Fitness pBest.Fitness -> Some rBest
+                | _                                                  -> None
+            match nBest with
+            | Some nBest ->
+                let exemplars = nBest::prevExemplars |> List.truncate maxExemplars
+                [|nBest|], create exemplars acceptance fInfluence
+            | None -> [||], create prevExemplars acceptance fInfluence
+
     
     let influence exemplars (ind:Individual) =
         match exemplars with

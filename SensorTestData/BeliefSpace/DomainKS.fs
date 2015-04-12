@@ -13,7 +13,7 @@ let rateOfImprovement oldFitness newFitness isBetter epsilon =
     else
         Down,(abs newFitness-oldFitness) / denominator
 
-let maxParm isBetter fitness oldFitness parms  =
+let maxSlope isBetter fitness oldFitness parms  =
     let parms    = Array.copy parms
     let epsilons = parms |> Array.map epsilon
     let mutable maxS = Flat,0.
@@ -42,33 +42,38 @@ let create isBetter fitness maxExemplars =
 
     let rec acceptance 
         fInfluence 
-        (prevExemplars:Individual list, gbestSlope) 
+        (prevExemplars:Individual list, pBestSlope) 
         (inds:Individual array) =
-        let runBest = inds.[0] //assume best individual is first
-        match prevExemplars with
-        | [] -> 
-            [|runBest|], create [gbest] acceptance fInfluence
-        | prevBest::rest when isBetter ind.Fitness prevBest.Fitness -> 
-            let newExemplars = 
-                ind::prevExemplars 
-                |> List.truncate maxExemplars
-            let gbestSlope,_ = maxParm isBetter fitness ind.Fitness ind.Parms
-            [|ind|], create (newExemplars,gbestSlope) acceptance fInfluence
-        | xs -> [||], create (xs,gbestSlope) acceptance fInfluence
-    
-    let influence (exemplars,gbestSlope) (ind:Individual) =
-        let (slope,parms) = maxParm isBetter fitness ind.Fitness ind.Parms
-        let parm = parms.[slope.Index]
+        match inds with
+        | [||] -> inds, create (prevExemplars,pBestSlope) acceptance fInfluence
+        | inds ->
+            let runBest = inds.[0] //assume best individual is first
+            let newBest =
+                match prevExemplars with
+                | []                                                    -> Some runBest
+                | pBest::_ when isBetter runBest.Fitness pBest.Fitness  -> Some runBest
+                | _                                                     -> None
+            match newBest with
+            | Some nBest ->
+                let slope,_ = maxSlope isBetter fitness runBest.Fitness runBest.Parms
+                let exemplars = nBest::prevExemplars |> List.truncate maxExemplars
+                [|nBest|], create (exemplars,slope) acceptance fInfluence
+            | None -> 
+                [||], create (prevExemplars,pBestSlope) acceptance fInfluence
+
+    let influence (exemplars,gBestSlope) (ind:Individual) =
+        let (slope,parms) = maxSlope isBetter fitness ind.Fitness ind.Parms
+        let maxParm = parms.[slope.Index]
         let parm =
             match slope.Direction with
-            | Up   -> slideUp parm
-            | Down -> slideDown parm
+            | Up   -> slideUp maxParm
+            | Down -> slideDown maxParm
             | Flat -> 
-                match gbestSlope.Direction with
+                match gBestSlope.Direction with
                 | Up    -> slideUp parms.[slope.Index]
                 | Down  -> slideDown parms.[slope.Index]
                 | Flat  -> evolveS(parms.[slope.Index])
-        parms.[i] <- parm
+        parms.[slope.Index] <- parm
         {ind with Parms=parms}
        
     create ([],{Index=0; Direction=Flat; Magnitude=0.}) acceptance influence
