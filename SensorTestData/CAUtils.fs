@@ -38,10 +38,22 @@ let rnd = System.Random()
 *)
 
 let randomize = function
-    | F (v,mn,mx)    -> F (randF mn mx, mn, mx)
-    | F32 (v,min,mx) -> F32 (randF32 min mx, min, mx)
-    | I (v,min,mx)   -> I(randI min mx, min, mx)
-    | I64 (v,min,mx) -> I64(randI64 min mx, min, mx)
+    | F (v,mn,mx)   -> F (randF mn mx, mn, mx)
+    | F32 (v,mn,mx) -> F32 (randF32 mn mx, mn, mx)
+    | I (v,mn,mx)   -> I(randI mn mx, mn, mx)
+    | I64 (v,mn,mx) -> I64(randI64 mn mx, mn, mx)
+
+let slideUp = function
+    | F (v,mn,mx)   -> F (randF v mx, mn, mx)
+    | F32 (v,mn,mx) -> F32 (randF32 v mx, mn, mx)
+    | I (v,mn,mx)   -> I(randI v mx, mn, mx)
+    | I64 (v,mn,mx) -> I64(randI64 v mx, mn, mx)
+
+let slideDown = function
+    | F (v,mn,mx)   -> F (randF mn v, mn, mx)
+    | F32 (v,mn,mx) -> F32 (randF32 mn v, mn, mx)
+    | I (v,mn,mx)   -> I(randI mn v, mn, mx)
+    | I64 (v,mn,mx) -> I64(randI64 mn v, mn, mx)
 
 let clamp mn mx x = max (min x mx) mn
 

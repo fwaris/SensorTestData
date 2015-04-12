@@ -2,6 +2,8 @@
 open CA
 open CAUtils
 
+type Slope = {Index:int; Magnitude:float; Direction:Dir}
+
 let rateOfImprovement oldFitness newFitness isBetter epsilon =
     let denominator = parmToFloat epsilon
     if oldFitness = newFitness then 
@@ -28,32 +30,45 @@ let maxParm isBetter fitness oldFitness parms  =
         | _    , (Flat,_)           -> ()
         | (_,a), (dir,b) when b > a -> maxS <- dir,b; maxI <- i
         | _                         -> ()
-    maxI,maxS    
+    {Index=maxI; Magnitude=snd maxS; Direction=fst maxS},parms    
 
 let create isBetter fitness maxExemplars =
-    let create exemplars fAccept fInfluence : KnowledgeSource =
+    let create state fAccept fInfluence : KnowledgeSource =
         {
             Type        = Domain
-            Accept      = fAccept fInfluence exemplars
-            Influence   = fInfluence exemplars
+            Accept      = fAccept fInfluence state
+            Influence   = fInfluence state
         }
 
-    let rec acceptance fInfluence prevExemplars (inds:Individual array) =
-        let ind = inds.[0] //assume best individual is first
+    let rec acceptance 
+        fInfluence 
+        (prevExemplars:Individual list, gbestSlope) 
+        (inds:Individual array) =
+        let runBest = inds.[0] //assume best individual is first
         match prevExemplars with
-        | [] -> [|ind|], create [ind] acceptance fInfluence
+        | [] -> 
+            [|runBest|], create [gbest] acceptance fInfluence
         | prevBest::rest when isBetter ind.Fitness prevBest.Fitness -> 
             let newExemplars = 
                 ind::prevExemplars 
                 |> List.truncate maxExemplars
-            [|ind|], create newExemplars acceptance fInfluence
-        | xs -> [||], create xs acceptance fInfluence
+            let gbestSlope,_ = maxParm isBetter fitness ind.Fitness ind.Parms
+            [|ind|], create (newExemplars,gbestSlope) acceptance fInfluence
+        | xs -> [||], create (xs,gbestSlope) acceptance fInfluence
     
-    let influence exemplars (ind:Individual) =
-        let (i,(Dir,magnitude)) = maxParm isBetter fitness ind.Fitness ind.Parms
-        let best =
-            match exemplars with
-            | [] -> ind
-            | best::_ -> influenceInd  ind best
+    let influence (exemplars,gbestSlope) (ind:Individual) =
+        let (slope,parms) = maxParm isBetter fitness ind.Fitness ind.Parms
+        let parm = parms.[slope.Index]
+        let parm =
+            match slope.Direction with
+            | Up   -> slideUp parm
+            | Down -> slideDown parm
+            | Flat -> 
+                match gbestSlope.Direction with
+                | Up    -> slideUp parms.[slope.Index]
+                | Down  -> slideDown parms.[slope.Index]
+                | Flat  -> evolveS(parms.[slope.Index])
+        parms.[i] <- parm
+        {ind with Parms=parms}
        
-    create [] acceptance influence
+    create ([],{Index=0; Direction=Flat; Magnitude=0.}) acceptance influence
