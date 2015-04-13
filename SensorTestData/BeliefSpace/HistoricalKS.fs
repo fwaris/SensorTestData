@@ -46,25 +46,33 @@ let create isBetter window =
         fInfluence 
         ({Window=win; Events=events} as history)
         (inds:Individual array) =
-        let newBest = inds.[0] //assume best individual is first
-        let prevBest = match events with [] -> newBest | b::_ -> b.Best
-        if isBetter newBest.Fitness prevBest.Fitness then
-            let eventDirection  = (prevBest.Parms,newBest.Parms) ||> Array.map2 dir
-            let changeEvent     = {Best=newBest; Direction=eventDirection}
-            let events          = changeEvent::events |> List.truncate win
-            let earliestEvent = events.[events.Length - 1]
-            let distance      = (newBest.Parms,earliestEvent.Best.Parms) ||> Array.map2 parmDiff
-            let direction     = (newBest.Parms,earliestEvent.Best.Parms) ||> Array.map2 dir
-            let updatedHistory =
-                {
-                    Window              = win
-                    Distance            = distance
-                    Direction           = direction
-                    Events              = events
-                }
-            [|newBest|],create updatedHistory acceptance fInfluence
-        else
-            [||],create history acceptance fInfluence
+        match inds with
+        | [||] -> [||],create history acceptance fInfluence
+        | inds ->
+            let rBest = inds.[0] //assume best individual is first 
+            let nBest = 
+                match events with
+                | []                                                -> Some rBest
+                | b::_ when isBetter rBest.Fitness b.Best.Fitness   -> Some rBest
+                | _                                                 -> None
+            match nBest with
+            | None -> [||], create history acceptance fInfluence
+            | Some nBest ->
+                let pBest = match events with [] -> nBest | b::_ -> b.Best
+                let eventDirection  = (pBest.Parms,nBest.Parms) ||> Array.map2 dir
+                let changeEvent     = {Best=nBest; Direction=eventDirection}
+                let events          = changeEvent::events |> List.truncate win
+                let earliestEvent = events.[events.Length - 1]
+                let distance      = (nBest.Parms,earliestEvent.Best.Parms) ||> Array.map2 parmDiff
+                let direction     = (nBest.Parms,earliestEvent.Best.Parms) ||> Array.map2 dir
+                let updatedHistory =
+                    {
+                        Window      = win
+                        Distance    = distance
+                        Direction   = direction
+                        Events      = events
+                    }
+                [|nBest|], create updatedHistory acceptance fInfluence
     
     let influence {Events=events} (ind:Individual) =
         let ev = events.[rnd.Next(0,events.Length-1)]

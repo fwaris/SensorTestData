@@ -110,6 +110,7 @@ let create parms isBetter =
     let rec acceptance fInfluence norms (inds:Individual array) =
         //assumes that individuals are sorted best fitness first
         let updatedNorms = inds |> Array.fold (updateNorms isBetter) norms
+        printfn "%A" updatedNorms
         inds,create updatedNorms acceptance fInfluence 
     
     let influence (norms:Norm array) (ind:Individual) =

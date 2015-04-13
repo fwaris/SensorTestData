@@ -33,6 +33,6 @@ let create isBetter maxExemplars =
     let influence exemplars (ind:Individual) =
         match exemplars with
         | [] -> ind
-        | best::_ -> influenceInd  ind best
+        | best::_ -> best |> influenceInd  ind
        
     create [] acceptance influence

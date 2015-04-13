@@ -71,6 +71,11 @@
     <Compile Include="BeliefSpace\DomainKS.fs" />
     <Compile Include="CARunner.fs" />
     <Compile Include="Program.fs" />
+    <None Include="Testing\TestParms.fsx" />
+    <None Include="Testing\TestSituational.fsx" />
+    <None Include="Testing\TestNormative.fsx" />
+    <None Include="Testing\TestHistorical.fsx" />
+    <None Include="Testing\TestDomain.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Charting">

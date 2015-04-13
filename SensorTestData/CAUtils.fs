@@ -57,11 +57,31 @@ let slideDown = function
 
 let clamp mn mx x = max (min x mx) mn
 
+let evolveInt iV =
+    let v = float iV
+    let v' = gaussian v 3.
+    if abs (v' - v) > 1. then 
+        int v' 
+    elif v'<v then 
+        iV - 1 
+    else 
+        iV + 1 
+
+let evolveInt64 i64V =
+    let v  = float i64V
+    let v' = gaussian v 3.
+    if abs (v' - v) > 1. then 
+        int64 v' 
+    elif v' < v then 
+        i64V - 1L
+    else 
+        i64V + 1L 
+
 let evolveS = function
     | F (v,mn,mx)    -> F   (gaussian v 1.                      |> clamp mn mx, mn, mx)
     | F32 (v,mn,mx)  -> F32 (gaussian (float v) 1. |> float32   |> clamp mn mx, mn, mx)
-    | I (v,mn,mx)    -> I   (gaussian (float v) 1. |> int       |> clamp mn mx, mn, mx)
-    | I64 (v,mn,mx)  -> I64 (gaussian (float v) 1. |> int64     |> clamp mn mx, mn, mx)
+    | I (v,mn,mx)    -> I   (evolveInt v                        |> clamp mn mx, mn, mx)
+    | I64 (v,mn,mx)  -> I64 (evolveInt64 v                      |> clamp mn mx, mn, mx)
 
 ///Use values from the 2nd parm to influence 1st parm
 ///(randomly move towards 2nd parm value)
@@ -181,3 +201,5 @@ let pop= [|for i in 1..100 -> {Id=i;Parms=parms;Fitness=0.;KS=Normative}|]
 let net = pop |> Array.mapi (fun i _ -> lbestNetwork pop i)       
 *)
 
+let Maximize a b = a > b
+let Minimize a b = a < b
