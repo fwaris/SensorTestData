@@ -7,6 +7,7 @@ let knowledgeSources beliefSpace =
         | []                      -> List.rev acc
         | Leaf(ks)::rest          -> loop (ks::acc) rest
         | Node(ks,children)::rest -> loop (loop (ks::acc) children) rest
+        | Roots kslist            -> kslist |> Li
     loop [] beliefSpace
         
 let randI min max = rnd.Next(min,max)

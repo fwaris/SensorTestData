@@ -1,6 +1,6 @@
 ﻿module CA
 
-type Tree<'a> = Leaf of 'a | Node of 'a * Tree<'a> list
+type Tree<'a> = Leaf of 'a | Node of 'a * Tree<'a> list | Roots of Tree<'a> list
 
 type Parm = 
     | F of      v:float     * min:float     * max:float 
@@ -19,7 +19,7 @@ and Network     = Population -> Id -> Individual array
 and BeliefSpace = KnowledgeSource Tree list
 and Acceptance  = BeliefSpace -> Population -> Individual array
 and Influence   = BeliefSpace -> Population -> Population
-and Update      = BeliefSpace -> Individual list -> BeliefSpace
+and Update      = BeliefSpace -> Individual array -> BeliefSpace
 and KnowledgeDistribution = BeliefSpace -> Population -> Population
 and KnowledgeSource = 
     {
