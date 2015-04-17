@@ -2,13 +2,12 @@
 open CA
 let rnd = System.Random()
 
-let knowledgeSources beliefSpace =
+let flatten tree =
     let rec loop acc = function
-        | []                      -> List.rev acc
-        | Leaf(ks)::rest          -> loop (ks::acc) rest
-        | Node(ks,children)::rest -> loop (loop (ks::acc) children) rest
-        | Roots kslist            -> kslist |> Li
-    loop [] beliefSpace
+        | Roots roots       -> List.fold loop acc roots
+        | Node(ks,children) -> List.fold loop (ks::acc) children
+        | Leaf(leaf)        -> leaf::acc
+    loop [] tree
         
 let randI min max = rnd.Next(min,max)
 let randF32 (min:float32) (max:float32) =  min + (float32 ((rnd.NextDouble()) * float (max - min)))

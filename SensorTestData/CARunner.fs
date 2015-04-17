@@ -43,4 +43,50 @@ let update beliefSpace bestInds =
 
 ///default population influence function
 let influence beliefSpace pop =
-    let ksMap = CAUtils.f
+    let ksMap = CAUtils.flatten beliefSpace |> List.map (fun k -> k.Type, k) |> Map.ofList
+    pop
+    |> PSeq.map (fun p -> ksMap.[p.KS].Influence p)
+    |> PSeq.toArray
+
+///roulette wheel KS distribution
+let rouletteDistribution (ind,friends:Individual array) = 
+    {ind with 
+        KS = friends.[CAUtils.rnd.Next(0,friends.Length-1)].KS
+    }
+
+///generic knowledge distribution
+let knowledgeDistribution distributionType pop network =
+    pop
+    |> PSeq.map (fun ind -> ind,network pop ind.Id)
+    |> PSeq.map distributionType
+    |> PSeq.toArray
+
+let step {CA=ca; Best=best; Count=c} maxBest =
+    let pop         = evaluate ca.Fitness ca.Population
+    let topInds     = ca.Acceptance ca.BeliefSpace pop
+    let beliefSpace = ca.Update ca.BeliefSpace topInds
+    let pop         = ca.KnowlegeDistribution pop ca.Network
+    let pop         = ca.Influence beliefSpace pop
+    let newBest = 
+        if ca.Comparator topInds.[0].Fitness best.[0].Fitness then 
+            (topInds.[0]::best) |> List.truncate maxBest
+        else 
+            best
+    {
+        CA =
+            {ca with
+                Population  = pop
+                BeliefSpace = beliefSpace
+            }
+        Best = newBest
+        Count = c + 1
+    }
+
+let run ca termination maxBest =
+    let rec loop stp = 
+        let stp = step stp maxBest
+        if termination stp then
+            stp
+        else
+            loop stp
+    loop {CA=ca; Best=[]; Count=0}

@@ -20,12 +20,13 @@ and BeliefSpace = KnowledgeSource Tree list
 and Acceptance  = BeliefSpace -> Population -> Individual array
 and Influence   = BeliefSpace -> Population -> Population
 and Update      = BeliefSpace -> Individual array -> BeliefSpace
-and KnowledgeDistribution = BeliefSpace -> Population -> Population
+and KnowledgeDistribution = Population -> Network -> Population
+
 and KnowledgeSource = 
     {
-        Type:Knowledge
-        Accept:Individual array -> Individual array * KnowledgeSource
-        Influence:Individual -> Individual
+        Type        : Knowledge
+        Accept      : Individual array -> Individual array * KnowledgeSource
+        Influence   : Individual -> Individual
     }
 
 type CA =
@@ -36,6 +37,7 @@ type CA =
         BeliefSpace             : BeliefSpace
         Acceptance              : Acceptance
         Influence               : Influence
+        Update                  : Update
         Fitness                 : Fitness
         Comparator              : Comparator
     }
