@@ -76,6 +76,7 @@
     <None Include="Testing\TestNormative.fsx" />
     <None Include="Testing\TestHistorical.fsx" />
     <None Include="Testing\TestDomain.fsx" />
+    <None Include="Testing\TestCA.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Charting">

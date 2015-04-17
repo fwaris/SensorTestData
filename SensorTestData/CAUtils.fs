@@ -119,8 +119,8 @@ let evolveInd individual =
         Parms = individual.Parms |> Array.map evolveS
     }
 
-let createPop parms size kss =
-    let kss = Seq.toArray kss
+let createPop parms size beliefSpace =
+    let kss = flatten beliefSpace
     let rnd = System.Random()
     [|
         for i in 0..size-1 do
@@ -130,7 +130,7 @@ let createPop parms size kss =
                     Id      = i
                     Parms   = rndParms
                     Fitness = System.Double.MinValue
-                    KS      = kss.[kss.Length%i]
+                    KS      = kss.[kss.Length%i].Type
 
                 }
     |]

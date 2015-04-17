@@ -61,6 +61,7 @@ let knowledgeDistribution distributionType pop network =
     |> PSeq.map distributionType
     |> PSeq.toArray
 
+///single step CA
 let step {CA=ca; Best=best; Count=c} maxBest =
     let pop         = evaluate ca.Fitness ca.Population
     let topInds     = ca.Acceptance ca.BeliefSpace pop
@@ -82,6 +83,7 @@ let step {CA=ca; Best=best; Count=c} maxBest =
         Count = c + 1
     }
 
+///run till termination
 let run ca termination maxBest =
     let rec loop stp = 
         let stp = step stp maxBest
