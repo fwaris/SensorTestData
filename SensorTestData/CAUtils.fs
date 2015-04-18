@@ -196,7 +196,21 @@ let epsilon = function
     | I(_,mn,mx)    -> I(1,mn,mx)
     | I64(_,mn,mx)  -> I64(1L,mn,mx)
 
-let l4bestNetwork (pop:Population) id = //return 4 'friends' from the ring
+let lBestNetwork (pop:Population) id = //return 2 'friends' from the ring
+    let m1 = id - 1
+    let m1 = if m1 < 0 then pop.Length + m1 else m1
+    let p1 = id + 1 
+    let p1 = if p1 >= pop.Length then p1 - pop.Length else p1
+//    printfn "id=%d, m1=%d, m2=%d, p1=%d, p2=%d" id m1 m2 p1 p2
+    [|pop.[m1]; pop.[p1]; |]
+(*
+#load "CA.fs"
+open CA
+let parms = [|F(1.,1.,10.)|]
+let pop= [|for i in 1..100 -> {Id=i;Parms=parms;Fitness=0.;KS=Normative}|]
+let net = pop |> Array.mapi (fun i _ -> lBestNetwork pop i)       
+*)
+let l4BestNetwork (pop:Population) id = //return 4 'friends' from the ring
     let m2 = id - 2
     let m2 = if m2 < 0 then pop.Length + m2 else m2
     let m1 = id - 1
@@ -207,13 +221,6 @@ let l4bestNetwork (pop:Population) id = //return 4 'friends' from the ring
     let p1 = if p1 >= pop.Length then p1 - pop.Length else p1
 //    printfn "id=%d, m1=%d, m2=%d, p1=%d, p2=%d" id m1 m2 p1 p2
     [|pop.[m2]; pop.[m1]; pop.[p1]; pop.[p2] |]
-(*
-#load "CA.fs"
-open CA
-let parms = [|F(1.,1.,10.)|]
-let pop= [|for i in 1..100 -> {Id=i;Parms=parms;Fitness=0.;KS=Normative}|]
-let net = pop |> Array.mapi (fun i _ -> lbestNetwork pop i)       
-*)
 
 let Maximize a b = a > b
 let Minimize a b = a < b

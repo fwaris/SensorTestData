@@ -9,21 +9,27 @@ let parms =
         F(0.,0.,10.) // y
     |]
 
-let goal = sqrt (6.**2. + 3.**2.)
-
+//http://en.wikipedia.org/wiki/Nonlinear_programming
+// maximize x + y
+// st. 1 <= x**2 + y**2 <= 2.
 let fitness (parms:Parm array) = 
     let x = match parms.[0] with F(x,_,_) -> x | _ -> failwith "no match"
-    let y = match parms.[0] with F(y,_,_) -> y | _ -> failwith "no match"
-    sqrt (x**2. + y**2.) - goal
+    let y = match parms.[1] with F(y,_,_) -> y | _ -> failwith "no match"
+    let s = x**2. + y**2.
+    if s >= 1. && s <= 2. then
+        x + y
+    else
+        -1. 
 
-let comparator  = CAUtils.Minimize
+let comparator  = CAUtils.Maximize
 let beliefSpace = CARunner.defaultBeliefSpace parms comparator fitness
+//let beliefSpace = Leaf (SituationalKS.create comparator 5)
 let pop         = CAUtils.createPop parms 1000 beliefSpace
 
 let ca =
     {
         Population           = pop
-        Network              = CAUtils.l4bestNetwork
+        Network              = CAUtils.lBestNetwork
         KnowlegeDistribution = CARunner.knowledgeDistribution CARunner.rouletteDistribution
         BeliefSpace          = beliefSpace
         Acceptance           = CARunner.acceptance 5 comparator
@@ -33,7 +39,12 @@ let ca =
         Comparator           = comparator
     }
 
-let termination step = step.Count > 500
+let termination step = step.Count > 1000
+
+(*
+let r = (CARunner.run ca termination 2)
+r.Best
+*)
 
 
 [<EntryPoint>]

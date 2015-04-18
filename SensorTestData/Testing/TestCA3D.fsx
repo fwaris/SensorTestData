@@ -10,21 +10,25 @@ open CA
 
 let parms = 
     [|
-        F(0.,0.,10.) // x
-        F(0.,0.,10.) // y
+        F(0.,-0.,10.) // x
+        F(0.,-0.,10.) // y
+        F(0.,-0.,10.) // z
     |]
 
 //http://en.wikipedia.org/wiki/Nonlinear_programming
-// maximize x + y
-// st. 1 <= x**2 + y**2 <= 2.
+// maximize xy + yz
+// st. x^2 - y^2 + z^2 <= 2
+//     x^2 + y^2 + z^2 <= 10
 let fitness (parms:Parm array) = 
-    let x = match parms.[0] with F(x,_,_) -> x | _ -> failwith "no match"
-    let y = match parms.[1] with F(y,_,_) -> y | _ -> failwith "no match"
-    let s = x**2. + y**2.
-    if s >= 1. && s <= 2. then
-        x + y
+    let x = match parms.[0] with F(v,_,_) -> v | _ -> failwith "no match"
+    let y = match parms.[1] with F(v,_,_) -> v | _ -> failwith "no match"
+    let z = match parms.[2] with F(v,_,_) -> v | _ -> failwith "no match"
+    let c1 = x**2. - y**2. + z**2. <= 2.
+    let c2 = x**2. + y**2. + z**2. <= 10.
+    if c1 && c2 then
+        x*y + y*z
     else
-        -1. 
+        -9999.0
 
 let comparator  = CAUtils.Maximize
 let beliefSpace = CARunner.defaultBeliefSpace parms comparator fitness
@@ -34,7 +38,7 @@ let pop         = CAUtils.createPop parms 1000 beliefSpace
 let ca =
     {
         Population           = pop
-        Network              = CAUtils.lBestNetwork
+        Network              = CAUtils.l4BestNetwork
         KnowlegeDistribution = CARunner.knowledgeDistribution CARunner.rouletteDistribution
         BeliefSpace          = beliefSpace
         Acceptance           = CARunner.acceptance 5 comparator
@@ -49,4 +53,7 @@ let termination step = step.Count > 1000
 (*
 let r = (CARunner.run ca termination 2)
 r.Best
+r.CA.Population |> Seq.countBy (fun p -> p.KS)
+r.CA.Fitness r.Best.[0].Parms
 *)
+

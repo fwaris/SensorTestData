@@ -20,7 +20,7 @@ let evaluate fitness =
 
 ///default acceptance function used in most CAs
 let acceptance take minmax beliefSpace (pop:Population) =
-    let sign = if minmax 2. 1. then +1. else -1. 
+    let sign = if minmax 2. 1. then -1. else +1. 
     let topInds = 
         pop 
         |> PSeq.sortBy (fun ind -> sign * ind.Fitness) 
