@@ -1,6 +1,20 @@
 ﻿module CAUtils
 open CA
-let rnd = System.Random()
+
+module Probability =
+    open System
+    open System.Threading
+    let RNG =
+        // Create master seed generator and thread local value
+        let seedGenerator = new Random()
+        let localGenerator = new ThreadLocal<Random>(fun _ -> 
+            lock seedGenerator (fun _ -> 
+            let seed = seedGenerator.Next()
+            new Random(seed)))
+        localGenerator
+   
+     
+let rnd = Probability.RNG
 
 let flatten tree =
     let rec loop acc = function
@@ -9,10 +23,10 @@ let flatten tree =
         | Leaf(leaf)        -> leaf::acc
     loop [] tree
         
-let randI min max = rnd.Next(min,max)
-let randF32 (min:float32) (max:float32) =  min + (float32 ((rnd.NextDouble()) * float (max - min)))
-let randF  min max = min + (rnd.NextDouble() * (max - min))
-let randI64 min max =  min + (int64 ((rnd.NextDouble()) * float (max - min)))
+let randI min max = rnd.Value.Next(min,max)
+let randF32 (min:float32) (max:float32) =  min + (float32 ((rnd.Value.NextDouble()) * float (max - min)))
+let randF  min max = min + (rnd.Value.NextDouble() * (max - min))
+let randI64 min max =  min + (int64 ((rnd.Value.NextDouble()) * float (max - min)))
 (*
 let rnd = System.Random()
 [for i in 1..100 -> randI 1 1000]
@@ -21,16 +35,16 @@ let rnd = System.Random()
 [for i in 1..100 -> randI64 1000L 1000000L]
 *)   
 
-//Box-Muller method
+//Marsaglia polar method
 let gaussian mean sigma = 
     let mutable v1 = 0.
     let mutable v2 = 0.
-    let mutable r2 = 2.
-    while r2 >= 1. || r2 = 0. do
-        v1 <- 2. * rnd.NextDouble() - 1.
-        v2 <- 2. * rnd.NextDouble() - 1.
-        r2 <- v1 * v1 + v2 * v2
-    let polar = sqrt(-2.*log(r2) / r2)
+    let mutable s = 2.
+    while s >= 1. || s = 0. do
+        v1 <- 2. * rnd.Value.NextDouble() - 1.
+        v2 <- 2. * rnd.Value.NextDouble() - 1.
+        s <- v1 * v1 + v2 * v2
+    let polar = sqrt(-2.*log(s) / s)
     v1*polar*sigma + mean
 (*
 let rnd = System.Random()
@@ -120,17 +134,17 @@ let evolveInd individual =
     }
 
 let createPop parms size beliefSpace =
-    let kss = flatten beliefSpace
+    let kss = flatten beliefSpace |> List.toArray
     let rnd = System.Random()
     [|
-        for i in 0..size-1 do
+        for i in 1..size do
             let rndParms = parms |> Array.map randomize
             yield
                 {
-                    Id      = i
+                    Id      = i-1
                     Parms   = rndParms
                     Fitness = System.Double.MinValue
-                    KS      = kss.[kss.Length%i].Type
+                    KS      = kss.[i % kss.Length].Type
 
                 }
     |]

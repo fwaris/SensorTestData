@@ -64,7 +64,7 @@ let create isBetter fitness maxExemplars =
     let influence (exemplars,gBestSlope) (ind:Individual) =
         let (slope,parms) = maxSlope isBetter fitness ind.Fitness ind.Parms
         let maxParm = parms.[slope.Index]
-        printfn "maxParm: %A" maxParm
+        //printfn "maxParm: %A" maxParm
         let parm =
             match slope.Direction with
             | Up   -> slideUp maxParm

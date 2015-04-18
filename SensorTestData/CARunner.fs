@@ -51,7 +51,7 @@ let influence beliefSpace pop =
 ///roulette wheel KS distribution
 let rouletteDistribution (ind,friends:Individual array) = 
     {ind with 
-        KS = friends.[CAUtils.rnd.Next(0,friends.Length-1)].KS
+        KS = friends.[CAUtils.rnd.Value.Next(0,friends.Length-1)].KS
     }
 
 ///generic knowledge distribution
@@ -69,10 +69,11 @@ let step {CA=ca; Best=best; Count=c} maxBest =
     let pop         = ca.KnowlegeDistribution pop ca.Network
     let pop         = ca.Influence beliefSpace pop
     let newBest = 
-        if ca.Comparator topInds.[0].Fitness best.[0].Fitness then 
-            (topInds.[0]::best) |> List.truncate maxBest
-        else 
-            best
+        match best,topInds with
+        | _ ,[||]   -> best
+        | [],is     -> [is.[0]]
+        | b::_,is when ca.Comparator is.[0].Fitness b.Fitness -> (is.[0]::best) |> List.truncate maxBest
+        | _         -> best
     {
         CA =
             {ca with
@@ -87,6 +88,7 @@ let step {CA=ca; Best=best; Count=c} maxBest =
 let run ca termination maxBest =
     let rec loop stp = 
         let stp = step stp maxBest
+        printfn "%i" stp.Count
         if termination stp then
             stp
         else

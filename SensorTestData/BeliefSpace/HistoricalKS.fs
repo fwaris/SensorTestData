@@ -75,7 +75,7 @@ let create isBetter window =
                 [|nBest|], create updatedHistory acceptance fInfluence
     
     let influence {Events=events} (ind:Individual) =
-        let ev = events.[rnd.Next(0,events.Length-1)]
+        let ev = events.[rnd.Value.Next(0,events.Length-1)]
         if isBetter ev.Best.Fitness ind.Fitness then
             ev.Best |> influenceInd ind
         else

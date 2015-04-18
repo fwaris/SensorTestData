@@ -19,14 +19,15 @@ let goal = sqrt (6.**2. + 3.**2.)
 let fitness (parms:Parm array) = 
     let x = match parms.[0] with F(x,_,_) -> x | _ -> failwith "no match"
     let y = match parms.[0] with F(y,_,_) -> y | _ -> failwith "no match"
-    sqrt (x**2. + y**2.) - goal
+    abs (sqrt (x**2. + y**2.) - goal)
 
 let comparator  = CAUtils.Minimize
 let beliefSpace = CARunner.defaultBeliefSpace parms comparator fitness
+let pop         = CAUtils.createPop parms 1000 beliefSpace
 
 let ca =
     {
-        Population           = CAUtils.createPop parms 1000 beliefSpace
+        Population           = pop
         Network              = CAUtils.l4bestNetwork
         KnowlegeDistribution = CARunner.knowledgeDistribution CARunner.rouletteDistribution
         BeliefSpace          = beliefSpace
@@ -39,4 +40,8 @@ let ca =
 
 let termination step = step.Count > 500
 
-let r = CARunner.run ca termination 2
+(*
+let r = (CARunner.run ca termination 2)
+r.Best
+r.CA.Population
+*)
