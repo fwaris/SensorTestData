@@ -22,7 +22,7 @@ let tocfg (p:Parm array) =
                         y_accel_back_thrld          = vF32 p.[3] //1.7f
                         y_accel_avg_front_thrld     = vF32 p.[4] //1.5f
                         y_accel_avg_back_thrld      = vF32 p.[5] //-1.5f
-                        avg_over_count              = vF32 p.[6] //4.0f
+                        avg_over_count              = float32 (vI p.[6]) //4.0f
 
                         xz_accel_tolerance          = vF32 p.[7] //0.5f
 
@@ -67,7 +67,7 @@ let tocfg (p:Parm array) =
 
                         xy_accel_tolerance          = vF32 p.[29] //0.5f
 
-                        avg_over_count              = vF32 p.[30] //4.0f
+                        avg_over_count              = float32 (vI p.[30]) //4.0f
 
                         xz_rot_tolerance            = vF32 p.[31] //0.1f
                         y_rot_tolerance             = vF32 p.[32] //2.5f

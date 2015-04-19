@@ -7,7 +7,7 @@ open TapTrain
 // st. 1 <= x**2 + y**2 <= 2.
 let fitness (parms:Parm array) = 
     let cfg = CA_SensorMapping.tocfg parms
-    evalLeft cfg +
+    evalLeft cfg  +
     evalRight cfg +
     evalSwipe cfg +
     evalTap cfg
@@ -21,7 +21,7 @@ let pop         = CAUtils.createPop CA_SensorMapping.parms 1000 beliefSpace
 let ca =
     {
         Population           = pop
-        Network              = CAUtils.lBestNetwork
+        Network              = CAUtils.l4BestNetwork
         KnowlegeDistribution = CARunner.knowledgeDistribution CARunner.rouletteDistribution
         BeliefSpace          = beliefSpace
         Acceptance           = CARunner.acceptance 5 comparator
@@ -31,7 +31,7 @@ let ca =
         Comparator           = comparator
     }
 
-let termination step = step.Count > 1000
+let termination step = step.Count > 100
 
 (*
 let r = (CARunner.run ca termination 2)
