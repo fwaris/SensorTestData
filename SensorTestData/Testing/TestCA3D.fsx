@@ -33,7 +33,7 @@ let fitness (parms:Parm array) =
 let comparator  = CAUtils.Maximize
 let beliefSpace = CARunner.defaultBeliefSpace parms comparator fitness
 //let beliefSpace = Leaf (SituationalKS.create comparator 5)
-let pop         = CAUtils.createPop parms 1000 beliefSpace
+let pop         = CAUtils.createPop parms 1000 beliefSpace true
 
 let ca =
     {

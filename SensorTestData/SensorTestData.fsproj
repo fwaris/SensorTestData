@@ -80,6 +80,7 @@
     <None Include="GestureOptimization\TapTrain.fsx" />
     <None Include="GestureOptimization\CA_SensorMapping.fsx" />
     <None Include="GestureOptimization\GestureOptimization.fsx" />
+    <Content Include="GestureOptimization\TextFile1.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Charting">

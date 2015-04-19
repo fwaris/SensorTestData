@@ -133,16 +133,21 @@ let evolveInd individual =
         Parms = individual.Parms |> Array.map evolveS
     }
 
-let createPop parms size beliefSpace =
+let createPop parms size beliefSpace randomizeAll =
     let kss = flatten beliefSpace |> List.toArray
     let rnd = System.Random()
     [|
         for i in 1..size do
-            let rndParms = parms |> Array.map randomize
+            let parms = 
+                //if specified, use the inital parm values for some inds (i.e. don't randomize)
+                if i < 5 && not randomizeAll then 
+                    parms 
+                else
+                    parms |> Array.map randomize
             yield
                 {
                     Id      = i-1
-                    Parms   = rndParms
+                    Parms   = parms
                     Fitness = System.Double.MinValue
                     KS      = kss.[i % kss.Length].Type
 

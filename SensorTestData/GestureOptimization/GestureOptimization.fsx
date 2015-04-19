@@ -16,7 +16,7 @@ let fitness (parms:Parm array) =
 let comparator  = CAUtils.Maximize
 let beliefSpace = CARunner.defaultBeliefSpace CA_SensorMapping.parms comparator fitness
 //let beliefSpace = Leaf (SituationalKS.create comparator 5)
-let pop         = CAUtils.createPop CA_SensorMapping.parms 1000 beliefSpace
+let pop         = CAUtils.createPop CA_SensorMapping.parms 1000 beliefSpace false
 
 let ca =
     {
@@ -31,9 +31,9 @@ let ca =
         Comparator           = comparator
     }
 
-let termination step = step.Count > 100
+let termination step = step.Count > 2
 
 (*
 let r = (CARunner.run ca termination 2)
-r.Best
+r.Best.[0].Parms |> CA_SensorMapping.tocfg
 *)

@@ -1,0 +1,43 @@
+﻿
+Results - April 18
+{xyz_accel_quite_limit = 0.214309737f;
+   TapConfig = {gstr_time_limit = 156818776L;
+                y_accel_front_thrld = 3.23872018f;
+                y_accel_back_thrld = 0.100000001f;
+                y_accel_avg_front_thrld = 2.56391382f;
+                y_accel_avg_back_thrld = 4.10641479f;
+                xz_accel_tolerance = 0.925826013f;
+                avg_over_count = 8.0f;
+                xy_rot_tolerance = 1.98922694f;
+                z_rot_tolerance = 1.14510465f;
+                TapCfg = {gstr_time_limit = 514678835L;
+                          time_limit_to_reach_low_accel = 473968264L;
+                          low_y_accel_limit = 1.98048484f;
+                          x_accel_tolerance = 4.39099026f;
+                          z_accel_tolerance = 2.61941195f;
+                          ret_x_accel_tolerance = 4.65797138f;
+                          ret_z_accel_tolerance = 4.01250648f;
+                          xy_rot_tolerance = 5.0f;
+                          z_rot_tolerance = 3.14386368f;};};
+   LRConfig = {x_grav_high_limit = 5.0f;
+               x_grav_low_limit = 2.78212762f;
+               z_grav_zero_tolerance = 3.89156461f;
+               z_grav_Left_thrsld = -3.56083155f;
+               z_grav_right_thrsld = 5.45908737f;};
+   SwipeConfig = {z_accel_front_thrsld = 5.0f;
+                  z_accel_back_thrsld = -1.27145481f;
+                  z_accel_avg_front_thrsld = 3.90107822f;
+                  z_accel_avg_back_thrsld = -1.97973597f;
+                  xy_accel_tolerance = 2.15430117f;
+                  avg_over_count = 9.0f;
+                  gstr_time_limit = 442309156L;
+                  xz_rot_tolerance = 2.50384808f;
+                  y_rot_tolerance = 2.46603847f;
+                  SwipeCfg = {gstr_time_limit = 760078951L;
+                              x_accel_tolerance = 2.63507032f;
+                              y_accel_tolerance = 1.71369588f;
+                              ret_x_accel_tolerance = 4.71363401f;
+                              ret_y_accel_tolerance = 2.6087718f;
+                              xz_rot_tolerance = 2.55434346f;
+                              y_rot_tolerance = 3.11599064f;
+                              low_z_accel_limit = 2.49825788f;};};}
