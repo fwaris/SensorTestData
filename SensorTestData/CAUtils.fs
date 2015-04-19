@@ -224,3 +224,10 @@ let l4BestNetwork (pop:Population) id = //return 4 'friends' from the ring
 
 let Maximize a b = a > b
 let Minimize a b = a < b
+
+let vF   = function F(v,_,_) -> v   | _ -> failwith "invalid type"
+let vF32 = function F32(v,_,_) -> v | _ -> failwith "invalid type"
+let vI   = function I(v,_,_) -> v   | _ -> failwith "invalid type"
+let vI64 = function I64(v,_,_) -> v | _ -> failwith "invalid type"
+
+

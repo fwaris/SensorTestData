@@ -1,6 +1,6 @@
-﻿#r @"..\packages\FSharp.Data.2.1.1\lib\net40\FSharp.Data.dll"
-#load @"..\packages\FSharp.Charting.0.90.9\Fsharp.Charting.fsx"
-#load "KMeansClustering.fs"
+﻿#r @"..\..\packages\FSharp.Data.2.1.1\lib\net40\FSharp.Data.dll"
+#load @"..\..\packages\FSharp.Charting.0.90.9\Fsharp.Charting.fsx"
+#load "..\KMeansClustering.fs"
 open FSharp.Data
 open System.IO
 
