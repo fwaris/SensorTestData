@@ -10,7 +10,8 @@ let fitness (parms:Parm array) =
     evalLeft cfg  +
     evalRight cfg +
     evalSwipe cfg +
-    evalTap cfg
+    evalTap cfg +
+    evalDriv2 cfg
     |> float
 
 let comparator  = CAUtils.Maximize
@@ -31,7 +32,7 @@ let ca =
         Comparator           = comparator
     }
 
-let termination step = step.Count > 2
+let termination step = step.Count > 10
 
 (*
 let r = (CARunner.run ca termination 2)
