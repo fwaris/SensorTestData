@@ -7,17 +7,17 @@ open TapTrain
 // st. 1 <= x**2 + y**2 <= 2.
 let fitness (parms:Parm array) = 
     let cfg = CA_SensorMapping.tocfg parms
-    evalLeft cfg  +
-    evalRight cfg +
-    evalSwipe cfg +
-    evalTap cfg +
-    evalDriv2 cfg
+    evalLeft cfg 
+    + evalRight cfg
+    + evalSwipe cfg
+    + evalTap cfg
+    //evalDriv2 cfg
     |> float
 
 let comparator  = CAUtils.Maximize
 let beliefSpace = CARunner.defaultBeliefSpace CA_SensorMapping.parms comparator fitness
 //let beliefSpace = Leaf (SituationalKS.create comparator 5)
-let pop         = CAUtils.createPop CA_SensorMapping.parms 1000 beliefSpace false
+let pop         = CAUtils.createPop CA_SensorMapping.parms 1000 beliefSpace true
 
 let ca =
     {
@@ -32,7 +32,7 @@ let ca =
         Comparator           = comparator
     }
 
-let termination step = step.Count > 10
+let termination step = step.Count > 100
 
 (*
 let r = (CARunner.run ca termination 2)

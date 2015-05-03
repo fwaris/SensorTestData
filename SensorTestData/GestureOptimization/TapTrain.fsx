@@ -3,6 +3,7 @@
 open FSharp.Data
 open System.IO
 
+//let folder = @"c:/ws/sensorLogs/training_samsung/"
 let folder = @"c:/ws/sensorLogs/training/"
 let swipeData = Path.Combine(folder,"swipe.csv")
 let tapData   = Path.Combine(folder,"tap.csv")

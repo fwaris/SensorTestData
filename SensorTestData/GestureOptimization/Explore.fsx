@@ -15,16 +15,25 @@ let RotationVector      = 11
 
 //let driving = @"C:\ws\sensorLogs\driving_20141230_204949.csv"
 //let twist   = @"C:\ws\sensorLogs\twist_20141231_144058.csv"
-let tap1 = @"c:/ws\sensorLogs\tap_1.csv"
+let tap = @"c:/ws\sensorLogs\training_sony\tap.csv"
+let tapSm = @"c:/ws\sensorLogs\training_samsung\tap.csv"
+let swipe = @"c:/ws\sensorLogs\training_sony\swipe.csv"
+let swipeSm = @"c:/ws\sensorLogs\training_samsung\swipe.csv"
+let twist = @"c:/ws\sensorLogs\training_sony\twist.csv"
+let twistsm = @"c:/ws\sensorLogs\training_samsung\twist.csv"
+let left = @"c:/ws\sensorLogs\training_sony\left.csv"
+let leftSm = @"c:/ws\sensorLogs\training_samsung\left.csv"
+let right = @"c:/ws\sensorLogs\training_sony\right.csv"
+let rightSm = @"c:/ws\sensorLogs\training_samsung\right.csv"
 
 type SensorInput= CsvProvider<Schema=schema, HasHeaders=false>
-let f = SensorInput.Load(tap1)
-f.Rows |> Seq.take 1
+//let f = SensorInput.Load(tap1)
+//f.Rows |> Seq.take 1
+//
+//f.Rows |> Seq.map (fun x -> x.Sensor) |> Seq.distinct |> Seq.toArray
 
-f.Rows |> Seq.map (fun x -> x.Sensor) |> Seq.distinct |> Seq.toArray
-
-let showSensor sensor = f.Rows |> Seq.filter (fun r -> r.Sensor = sensor) |> Seq.iter (printfn "%A")
-let countSensors() = f.Rows |> Seq.countBy (fun r->r.Sensor) |> Seq.iter (printfn "%A")
+let showSensor sensor (f:SensorInput)  = f.Rows |> Seq.filter (fun r -> r.Sensor = sensor) |> Seq.iter (printfn "%A")
+let countSensors (f:SensorInput) = f.Rows |> Seq.countBy (fun r->r.Sensor) |> Seq.iter (printfn "%A")
 
 let rng = System.Random()
 type Rec = {Sensor:int; Ticks:int64; X:float32; Y:float32; Z:float32; Omega:float32 option}
@@ -41,15 +50,25 @@ let records sensor (f:SensorInput) =
      |> Seq.map toRec
 
 (*
-showSensor Gravity
-showSensor Accelerometer
-showSensor LinearAcceleration
-showSensor RotationVector
-showSensor Gyroscope
-showSensor Orientation
+let d = SensorInput.Load(swipe)
+let d = SensorInput.Load(swipeSm)
+let d = SensorInput.Load(twist)
+let d = SensorInput.Load(twistSm)
+let d = SensorInput.Load(tap)
+let d = SensorInput.Load(tapSm)
+let d = SensorInput.Load(left)
+let d = SensorInput.Load(leftSm)
+let d = SensorInput.Load(right)
+let d = SensorInput.Load(rightSm)
+
+showSensor Gravity d
+showSensor Accelerometer d
+showSensor LinearAcceleration d
+showSensor RotationVector d
+showSensor Gyroscope d
 *)
 
-let showTimeDiffs sensor =
+let showTimeDiffs (f:SensorInput) sensor =
     f.Rows
     |> Seq.filter (fun r -> r.Sensor = sensor)
     |> Seq.windowed 2 
@@ -63,7 +82,6 @@ showTimeDiffs Accelerometer
 showTimeDiffs LinearAcceleration
 showTimeDiffs RotationVector
 showTimeDiffs Gyroscope
-showTimeDiffs Orientation
 *)
 
 open FSharp.Charting
@@ -132,14 +150,28 @@ let plotW sensor title (data:SensorInput) =
     plot4Y title xs ys zs ws
 
 (*
-plot Gravity "Gravity" f
-plot Accelerometer "Accelerometer" f
-plotL Accelerometer "Accelerometer" f
-plot LinearAcceleration "Linear Acceleration" f
-plotL LinearAcceleration "Linear Acceleration" f
-plotW RotationVector "Rotation Vector" f
-plot RotationVector "Rotation Vector" f
-plot Gyroscope "Gyroscope" f
+let d = SensorInput.Load(swipe)
+let d = SensorInput.Load(swipeSm)
+let d = SensorInput.Load(twist)
+let d = SensorInput.Load(twistSm)
+let d = SensorInput.Load(tap)
+let d = SensorInput.Load(tapSm)
+let d = SensorInput.Load(left)
+let d = SensorInput.Load(leftSm)
+let d = SensorInput.Load(right)
+let d = SensorInput.Load(rightSm)
+
+let d = SensorInput.Load(@"c:\ws\sensorLogs\sony\swipe.csv")
+let d = SensorInput.Load(@"c:\ws\sensorLogs\sony\tap.csv")
+
+plot Gravity "Gravity"  d
+plot Accelerometer "Accelerometer" d
+plotL Accelerometer "Accelerometer" d
+plot LinearAcceleration "Linear Acceleration" d
+plotL LinearAcceleration "Linear Acceleration" d
+plotW RotationVector "Rotation Vector" d
+plot RotationVector "Rotation Vector" d
+plot Gyroscope "Gyroscope" d
 *)
 
 let distance3 (s1:Rec) (s2:Rec) =
