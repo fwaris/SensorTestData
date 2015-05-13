@@ -85,7 +85,7 @@ let step {CA=ca; Best=best; Count=c} maxBest =
     }
 
 ///run till termination
-let run ca termination maxBest =
+let run termination maxBest ca =
     let rec loop stp = 
         let stp = step stp maxBest
         let best = if stp.Best.Length > 0 then stp.Best.[0].Fitness else 0.0
