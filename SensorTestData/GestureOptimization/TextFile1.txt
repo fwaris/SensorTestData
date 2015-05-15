@@ -214,3 +214,47 @@ may 13 - score 19
                               xz_rot_tolerance = 2.78367877f;
                               y_rot_tolerance = 3.85147643f;
                               low_z_accel_limit = 2.71300721f;};};}
+
+May 15 - score 208
+val bestAll : Navigation.NavigationCfg =
+  {xyz_accel_quite_limit = 1.53595424f;
+   TapConfig = {gstr_time_limit = 627096163L;
+                y_accel_front_thrld = 0.137690037f;
+                y_accel_back_thrld = 0.937321484f;
+                y_accel_avg_front_thrld = 1.42948413f;
+                y_accel_avg_back_thrld = 2.57372451f;
+                xz_accel_tolerance = 1.57058358f;
+                avg_over_count = 7.0f;
+                xy_rot_tolerance = 2.45579791f;
+                z_rot_tolerance = 0.63446033f;
+                TapCfg = {gstr_time_limit = 89182441L;
+                          time_limit_to_reach_low_accel = 368253201L;
+                          low_y_accel_limit = 0.914043486f;
+                          x_accel_tolerance = 2.04115629f;
+                          z_accel_tolerance = 3.29856491f;
+                          ret_x_accel_tolerance = 2.03625607f;
+                          ret_z_accel_tolerance = 2.95862842f;
+                          xy_rot_tolerance = 3.23148632f;
+                          z_rot_tolerance = 2.97839952f;};};
+   LRConfig = {x_grav_high_limit = 5.47138548f;
+               x_grav_low_limit = 4.30215931f;
+               z_grav_zero_tolerance = 3.89866972f;
+               z_grav_Left_thrsld = -2.88945603f;
+               z_grav_right_thrsld = 6.48369932f;};
+   SwipeConfig = {z_accel_front_thrsld = 2.12353539f;
+                  z_accel_back_thrsld = -3.59044194f;
+                  z_accel_avg_front_thrsld = 2.90341806f;
+                  z_accel_avg_back_thrsld = -1.64295053f;
+                  xy_accel_tolerance = 4.52377892f;
+                  avg_over_count = 1.0f;
+                  gstr_time_limit = 469225488L;
+                  xz_rot_tolerance = 2.4141531f;
+                  y_rot_tolerance = 4.12105274f;
+                  SwipeCfg = {gstr_time_limit = 738089063L;
+                              x_accel_tolerance = 3.93655849f;
+                              y_accel_tolerance = 1.68081605f;
+                              ret_x_accel_tolerance = 1.9172442f;
+                              ret_y_accel_tolerance = 2.1677525f;
+                              xz_rot_tolerance = 1.23240876f;
+                              y_rot_tolerance = 1.77168429f;
+                              low_z_accel_limit = 1.79593349f;};};}

@@ -48,10 +48,40 @@ let influence beliefSpace pop =
     |> PSeq.map (fun p -> ksMap.[p.KS].Influence p)
     |> PSeq.toArray
 
-///roulette wheel KS distribution
-let rouletteDistribution (ind,friends:Individual array) = 
+///majority wheel KS distribution
+let majority (ind,friends:Individual array) = 
     {ind with 
-        KS = friends.[CAUtils.rnd.Value.Next(0,friends.Length-1)].KS
+        KS = 
+            let f = friends.[CAUtils.rnd.Value.Next(0,friends.Length-1)]
+            if f.Fitness > ind.Fitness then
+                f.KS
+            else
+                ind.KS
+    }
+
+///weighted majority wheel KS distribution
+let weightedMajority (ind,friends:Individual array) = 
+    {ind with 
+        KS = 
+            let weighted = 
+                friends 
+                |> Seq.filter (fun i -> i.Fitness > ind.Fitness)                      //filter out lower performers      
+                |> Seq.groupBy (fun i -> i.KS)                                        //group by KS
+                |> Seq.map (fun (ks,inds) -> ks,inds |> Seq.sumBy (fun i->i.Fitness)) //sum fitness of each group 
+                |> Seq.fold                                                           //calc low-high ranges for each group
+                    (fun acc (ks,f) -> 
+                        match acc with 
+                        | []            -> (ks,(0.,f))::acc
+                        | (_,(l,h))::_  -> (ks,(h,f+h))::acc
+                    )
+                    []
+            if List.isEmpty weighted then
+                ind.KS
+            else
+                let sum = snd <| snd weighted.Head 
+                let  r = CAUtils.rnd.Value.NextDouble()  * sum
+                let chosen = weighted |> List.rev |> List.pick (fun (ks,(l,h)) -> if r < h then Some ks else None)
+                chosen
     }
 
 ///generic knowledge distribution
@@ -62,7 +92,7 @@ let knowledgeDistribution distributionType pop network =
     |> PSeq.toArray
 
 ///single step CA
-let step {CA=ca; Best=best; Count=c} maxBest =
+let step {CA=ca; Best=best; Count=c; Progress=p} maxBest =
     let pop         = evaluate ca.Fitness ca.Population
     let topInds     = ca.Acceptance ca.BeliefSpace pop
     let beliefSpace = ca.Update ca.BeliefSpace topInds
@@ -81,6 +111,7 @@ let step {CA=ca; Best=best; Count=c} maxBest =
                 BeliefSpace = beliefSpace
             }
         Best = newBest
+        Progress = newBest.[0].Fitness::p
         Count = c + 1
     }
 
@@ -90,8 +121,17 @@ let run termination maxBest ca =
         let stp = step stp maxBest
         let best = if stp.Best.Length > 0 then stp.Best.[0].Fitness else 0.0
         printfn "step %i. fitness=%A" stp.Count best
+        printfn "KS = %A" (stp.CA.Population |> Seq.countBy (fun x->x.KS))
         if termination stp then
             stp
         else
             loop stp
-    loop {CA=ca; Best=[]; Count=0}
+    loop {CA=ca; Best=[]; Count=0; Progress=[]}
+
+
+let ``terminate if no improvement in 5 generations`` (step:TimeStep) =
+    match step.Progress with
+    | f1::f2::f3::f4::f5::_ when f1=f2 && f2=f3 && f3=f4 && f4=f5 -> true
+    | _ -> false
+        
+        

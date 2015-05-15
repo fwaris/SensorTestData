@@ -42,7 +42,7 @@ type CA =
         Comparator              : Comparator
     }
 
-type TimeStep = {CA:CA ; Best:Individual list; Count:int}
+type TimeStep = {CA:CA ; Best:Individual list; Progress:float list; Count:int}
 type TerminationCondition = TimeStep -> bool
 
             

@@ -30,7 +30,7 @@ let ca =
     {
         Population           = pop
         Network              = CAUtils.lBestNetwork
-        KnowlegeDistribution = CARunner.knowledgeDistribution CARunner.rouletteDistribution
+        KnowlegeDistribution = CARunner.knowledgeDistribution CARunner.majority
         BeliefSpace          = beliefSpace
         Acceptance           = CARunner.acceptance 5 comparator
         Influence            = CARunner.influence
