@@ -51,12 +51,7 @@ let influence beliefSpace pop =
 ///majority wheel KS distribution
 let majority (ind,friends:Individual array) = 
     {ind with 
-        KS = 
-            let f = friends.[CAUtils.rnd.Value.Next(0,friends.Length-1)]
-            if f.Fitness > ind.Fitness then
-                f.KS
-            else
-                ind.KS
+        KS = friends.[CAUtils.rnd.Value.Next(0,friends.Length-1)].KS
     }
 
 ///weighted majority wheel KS distribution
@@ -65,7 +60,6 @@ let weightedMajority (ind,friends:Individual array) =
         KS = 
             let weighted = 
                 friends 
-                |> Seq.filter (fun i -> i.Fitness > ind.Fitness)                      //filter out lower performers      
                 |> Seq.groupBy (fun i -> i.KS)                                        //group by KS
                 |> Seq.map (fun (ks,inds) -> ks,inds |> Seq.sumBy (fun i->i.Fitness)) //sum fitness of each group 
                 |> Seq.fold                                                           //calc low-high ranges for each group
@@ -75,13 +69,10 @@ let weightedMajority (ind,friends:Individual array) =
                         | (_,(l,h))::_  -> (ks,(h,f+h))::acc
                     )
                     []
-            if List.isEmpty weighted then
-                ind.KS
-            else
-                let sum = snd <| snd weighted.Head 
-                let  r = CAUtils.rnd.Value.NextDouble()  * sum
-                let chosen = weighted |> List.rev |> List.pick (fun (ks,(l,h)) -> if r < h then Some ks else None)
-                chosen
+            let sum = snd <| snd weighted.Head 
+            let  r = CAUtils.rnd.Value.NextDouble()  * sum
+            let chosen = weighted |> List.rev |> List.pick (fun (ks,(l,h)) -> if r < h then Some ks else None)
+            chosen
     }
 
 ///generic knowledge distribution
