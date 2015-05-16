@@ -51,7 +51,12 @@ let influence beliefSpace pop =
 ///majority wheel KS distribution
 let majority (ind,friends:Individual array) = 
     {ind with 
-        KS = friends.[CAUtils.rnd.Value.Next(0,friends.Length-1)].KS
+        KS = 
+            let f = friends.[CAUtils.rnd.Value.Next(0,friends.Length-1)]
+            if f.Fitness > ind.Fitness then 
+                f.KS
+            else
+                ind.KS
     }
 
 ///weighted majority wheel KS distribution
@@ -102,7 +107,7 @@ let step {CA=ca; Best=best; Count=c; Progress=p} maxBest =
                 BeliefSpace = beliefSpace
             }
         Best = newBest
-        Progress = newBest.[0].Fitness::p
+        Progress = newBest.[0].Fitness::p |> List.truncate 100
         Count = c + 1
     }
 
