@@ -305,6 +305,11 @@ val cfg : Navigation.NavigationCfg =
                               low_z_accel_limit = 1.78635275f;};};}
 
 May 16 - 91.4
+    let total = fL + fR + fS + fT + (0.3 * fD)
+    let diffs = 
+        abs (fL - fR) + abs(fR - fS) + abs (fS - fT) + 
+        abs (fL - fS) + abs (fR - fT) + abs (fL - fT)
+    3. * total - diffs
 
 val cfg : Navigation.NavigationCfg =
   {xyz_accel_quite_limit = 1.4938637f;
@@ -349,3 +354,45 @@ val cfg : Navigation.NavigationCfg =
                               y_rot_tolerance = 2.82958937f;
                               low_z_accel_limit = 1.11323428f;};};}
 
+val cfg : Navigation.NavigationCfg =
+  {xyz_accel_quite_limit = 0.947053015f;
+   TapConfig = {gstr_time_limit = 581971396L;
+                y_accel_front_thrld = 2.68504071f;
+                y_accel_back_thrld = 1.73763049f;
+                y_accel_avg_front_thrld = 1.24289298f;
+                y_accel_avg_back_thrld = 0.875287294f;
+                xz_accel_tolerance = 1.8960278f;
+                avg_over_count = 3.0f;
+                xy_rot_tolerance = 4.22521925f;
+                z_rot_tolerance = 2.7151866f;
+                TapCfg = {gstr_time_limit = 90565692L;
+                          time_limit_to_reach_low_accel = 368478449L;
+                          low_y_accel_limit = 0.791555464f;
+                          x_accel_tolerance = 2.6267972f;
+                          z_accel_tolerance = 3.20369673f;
+                          ret_x_accel_tolerance = 0.17126438f;
+                          ret_z_accel_tolerance = 3.15870857f;
+                          xy_rot_tolerance = 3.57600784f;
+                          z_rot_tolerance = 2.25686574f;};};
+   LRConfig = {x_grav_high_limit = 5.49540854f;
+               x_grav_low_limit = 4.17034483f;
+               z_grav_zero_tolerance = 4.01548719f;
+               z_grav_Left_thrsld = -3.06415749f;
+               z_grav_right_thrsld = 6.86261129f;};
+   SwipeConfig = {z_accel_front_thrsld = 2.26404142f;
+                  z_accel_back_thrsld = -3.44177103f;
+                  z_accel_avg_front_thrsld = 2.83662558f;
+                  z_accel_avg_back_thrsld = -1.97319019f;
+                  xy_accel_tolerance = 2.77458549f;
+                  avg_over_count = 1.0f;
+                  gstr_time_limit = 459489047L;
+                  xz_rot_tolerance = 3.7046299f;
+                  y_rot_tolerance = 2.63345194f;
+                  SwipeCfg = {gstr_time_limit = 735104025L;
+                              x_accel_tolerance = 4.36715317f;
+                              y_accel_tolerance = 1.68205583f;
+                              ret_x_accel_tolerance = 1.80822551f;
+                              ret_y_accel_tolerance = 4.41218472f;
+                              xz_rot_tolerance = 2.31794262f;
+                              y_rot_tolerance = 2.82504201f;
+                              low_z_accel_limit = 1.15450716f;};};}
