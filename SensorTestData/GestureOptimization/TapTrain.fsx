@@ -29,23 +29,23 @@ let twistSM cfg = F(Twist.start cfg, None)
 
 let countEvent e m = match Map.tryFind e m with Some c -> m |> Map.add e (c+1) | _ -> m |> Map.add e 1
 
-let evaluate stateMachine trainingSet fitness = 
+let evaluate stateMachine trainingSet  = 
     let _,m = ((stateMachine,Map.empty),trainingSet) ||> Seq.fold (fun (F (sm,_),m) e ->
         match sm e with
         | F(sm, Some e) -> F (sm,None), countEvent e m
         | F(sm, None)   -> F (sm,None), m)
-    fitness m
+    m
 
-let fitnessEvent event m =  (0,m)  ||> Map.fold (fun acc k v -> if k = event then 10 - abs(10 - v) else -v)
+let fitnessEvent event m =  (0,m)  ||> Map.fold (fun acc k v -> if k = event then acc + 10 - abs(10 - v) else acc - v)
 let fitnessDriving  m    = -((0,m) ||> Map.fold (fun acc _ v -> acc+v))
 
-let evalSwipe cfg = evaluate (navigationSM cfg) swipeTrain (fitnessEvent RE_Swipe)
-let evalTap cfg   = evaluate (navigationSM cfg) tapTrain   (fitnessEvent RE_Tap)
-let evalLeft cfg  = evaluate (navigationSM cfg) leftTrain  (fitnessEvent RE_Left)
-let evalRight cfg = evaluate (navigationSM cfg) rightTrain (fitnessEvent RE_Right)
-let evalTwist cfg = evaluate (twistSM cfg)      twistTrain (fitnessEvent RE_Twist)
-let evalDriv1 cfg = evaluate (twistSM cfg)      drivTrain  fitnessDriving
-let evalDriv2 cfg = evaluate (navigationSM cfg) drivTrain  fitnessDriving
+let evalSwipe cfg = evaluate (navigationSM cfg) swipeTrain |> (fitnessEvent RE_Swipe)
+let evalTap cfg   = evaluate (navigationSM cfg) tapTrain   |> (fitnessEvent RE_Tap)
+let evalLeft cfg  = evaluate (navigationSM cfg) leftTrain  |> (fitnessEvent RE_Left)
+let evalRight cfg = evaluate (navigationSM cfg) rightTrain |> (fitnessEvent RE_Right)
+let evalTwist cfg = evaluate (twistSM cfg)      twistTrain |> (fitnessEvent RE_Twist)
+let evalDriv1 cfg = evaluate (twistSM cfg)      drivTrain  |> fitnessDriving
+let evalDriv2 cfg = evaluate (navigationSM cfg) drivTrain  |> fitnessDriving
 
 (*
 //baseline
