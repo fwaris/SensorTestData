@@ -71,6 +71,7 @@ let bparms = r.Best.[0].Parms
 *)
 
 (*
+type Fs = {Left:float; Right:float; Tap:float; Swipe:float; Driv:float}
 let termIn step = step.Count > 3
 let f1 = CA_SensorMapping.tocfg>>evalLeft>>float
 let f2 = CA_SensorMapping.tocfg>>evalRight>>float
@@ -81,11 +82,24 @@ let fs = [f1;f2;f3;f4;f5]
 let runF f = {ca with Fitness=f} |> CARunner.run termIn 3
 let getBest ts=ts.Best.[0].Parms
 let bests = fs |> List.map (runF>>getBest) 
+let bestsCfg = bests |> List.map CA_SensorMapping.tocfg
+let bLeft = bestsCfg.[0]
+let bRight = bestsCfg.[1]
+let bTap   = bestsCfg.[2]
+let bSwipe = bestsCfg.[3]
+let bcfg = 
+      {
+           Navigation.NavigationCfg.xyz_accel_quite_limit = 0.746813118f;
+           Navigation.NavigationCfg.TapConfig = bTap.TapConfig;
+           Navigation.NavigationCfg.LRConfig = if f1 bests.[0] > f2 bests.[1] then bLeft.LRConfig else bRight.LRConfig
+           Navigation.NavigationCfg.SwipeConfig = bSwipe.SwipeConfig;
+        }
 let popn = bests |> Seq.collect (fun p -> CAUtils.createPop p 200 beliefSpace false) |> Seq.toArray
 let caAll = {ca with Population=popn}
 let allR = CARunner.run termination 3 caAll
 let bestAll = allR.Best.[0].Parms |> CA_SensorMapping.tocfg
 
 let bparms = allR.Best.[0].Parms
-fs |> List.map (fun f -> f bparms)
+let bparms = CA_SensorMapping.toParms bcfg
+fs |> List.map (fun f -> f bparms) |> fun xs -> {Left=xs.[0]; Right=xs.[1]; Tap=xs.[2]; Swipe=xs.[3]; Driv=xs.[4]}
 *)

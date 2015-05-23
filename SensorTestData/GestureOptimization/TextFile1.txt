@@ -354,7 +354,7 @@ val cfg : Navigation.NavigationCfg =
                               y_rot_tolerance = 2.82958937f;
                               low_z_accel_limit = 1.11323428f;};};}
 
-val cfg : Navigation.NavigationCfg =
+let c : Navigation.NavigationCfg =
   {xyz_accel_quite_limit = 0.947053015f;
    TapConfig = {gstr_time_limit = 581971396L;
                 y_accel_front_thrld = 2.68504071f;
@@ -396,3 +396,113 @@ val cfg : Navigation.NavigationCfg =
                               xz_rot_tolerance = 2.31794262f;
                               y_rot_tolerance = 2.82504201f;
                               low_z_accel_limit = 1.15450716f;};};}
+//may 18
+val bparms : Parm array =
+  [|F32 (0.746813118f,0.100000001f,2.0f);
+    I64 (338726623L,1000000L,1000000000L); F32 (2.73756313f,0.100000001f,5.0f);
+    F32 (0.840563953f,0.100000001f,5.0f); F32 (1.89504218f,0.100000001f,5.0f);
+    F32 (0.111222275f,0.100000001f,5.0f); I (7,1,10);
+    F32 (0.108583957f,0.100000001f,5.0f); F32 (1.76774597f,0.100000001f,5.0f);
+    F32 (4.16573572f,0.100000001f,5.0f); I64 (237416612L,1000000L,1000000000L);
+    I64 (297969789L,1000000L,1000000000L); F32 (4.27396202f,0.100000001f,5.0f);
+    F32 (1.47789574f,0.100000001f,5.0f); F32 (5.0f,0.100000001f,5.0f);
+    F32 (2.36727428f,0.100000001f,5.0f); F32 (1.76004195f,0.100000001f,5.0f);
+    F32 (3.7689817f,0.100000001f,5.0f); F32 (3.73230243f,0.100000001f,5.0f);
+    F32 (6.58026266f,0.100000001f,9.80000019f);
+    F32 (4.8306942f,0.100000001f,5.0f); F32 (1.06409729f,0.100000001f,5.0f);
+    F32 (-3.97491074f,-5.0f,-0.100000001f); F32 (6.54319334f,0.0f,8.0f);
+    I64 (581956088L,1000000L,1000000000L); F32 (1.7642051f,1.0f,5.0f);
+    F32 (-1.54394257f,-5.0f,-1.0f); F32 (2.72812796f,1.0f,5.0f);
+    F32 (-2.95265102f,-5.0f,-1.0f); F32 (3.60584617f,0.100000001f,5.0f);
+    I (1,1,10); F32 (4.77260494f,0.100000001f,5.0f);
+    F32 (4.93712568f,0.100000001f,5.0f); I64 (568502851L,1000000L,1000000000L);
+    F32 (5.0f,0.100000001f,5.0f); F32 (4.14266253f,0.100000001f,5.0f);
+    F32 (2.63074827f,0.100000001f,5.0f); F32 (2.0723331f,0.100000001f,5.0f);
+    F32 (4.88537169f,0.100000001f,5.0f); F32 (3.7392571f,0.100000001f,5.0f);
+    F32 (3.65984058f,0.100000001f,5.0f)|]
+val cfg : Navigation.NavigationCfg =
+  {xyz_accel_quite_limit = 0.746813118f;
+   TapConfig = {gstr_time_limit = 338726623L;
+                y_accel_front_thrld = 2.73756313f;
+                y_accel_back_thrld = 0.840563953f;
+                y_accel_avg_front_thrld = 1.89504218f;
+                y_accel_avg_back_thrld = 0.111222275f;
+                xz_accel_tolerance = 0.108583957f;
+                avg_over_count = 7.0f;
+                xy_rot_tolerance = 1.76774597f;
+                z_rot_tolerance = 4.16573572f;
+                TapCfg = {gstr_time_limit = 237416612L;
+                          time_limit_to_reach_low_accel = 297969789L;
+                          low_y_accel_limit = 4.27396202f;
+                          x_accel_tolerance = 1.47789574f;
+                          z_accel_tolerance = 5.0f;
+                          ret_x_accel_tolerance = 2.36727428f;
+                          ret_z_accel_tolerance = 1.76004195f;
+                          xy_rot_tolerance = 3.7689817f;
+                          z_rot_tolerance = 3.73230243f;};};
+   LRConfig = {x_grav_high_limit = 6.58026266f;
+               x_grav_low_limit = 4.8306942f;
+               z_grav_zero_tolerance = 1.06409729f;
+               z_grav_Left_thrsld = -3.97491074f;
+               z_grav_right_thrsld = 6.54319334f;};
+   SwipeConfig = {z_accel_front_thrsld = 1.7642051f;
+                  z_accel_back_thrsld = -1.54394257f;
+                  z_accel_avg_front_thrsld = 2.72812796f;
+                  z_accel_avg_back_thrsld = -2.95265102f;
+                  xy_accel_tolerance = 3.60584617f;
+                  avg_over_count = 1.0f;
+                  gstr_time_limit = 581956088L;
+                  xz_rot_tolerance = 4.77260494f;
+                  y_rot_tolerance = 4.93712568f;
+                  SwipeCfg = {gstr_time_limit = 568502851L;
+                              x_accel_tolerance = 5.0f;
+                              y_accel_tolerance = 4.14266253f;
+                              ret_x_accel_tolerance = 2.63074827f;
+                              ret_y_accel_tolerance = 2.0723331f;
+                              xz_rot_tolerance = 4.88537169f;
+                              y_rot_tolerance = 3.7392571f;
+                              low_z_accel_limit = 3.65984058f;};};}
+//independent runs combined into one
+let bcfg : Navigation.NavigationCfg =
+  {xyz_accel_quite_limit = 0.746813118f;
+   TapConfig = {gstr_time_limit = 597398259L;
+                y_accel_front_thrld = 3.9785111f;
+                y_accel_back_thrld = 4.92823505f;
+                y_accel_avg_front_thrld = 3.85392404f;
+                y_accel_avg_back_thrld = 4.31313467f;
+                xz_accel_tolerance = 4.91278267f;
+                avg_over_count = 4.0f;
+                xy_rot_tolerance = 0.316788852f;
+                z_rot_tolerance = 1.48084152f;
+                TapCfg = {gstr_time_limit = 318396237L;
+                          time_limit_to_reach_low_accel = 963822398L;
+                          low_y_accel_limit = 0.171378076f;
+                          x_accel_tolerance = 4.63168526f;
+                          z_accel_tolerance = 2.09980345f;
+                          ret_x_accel_tolerance = 0.472726345f;
+                          ret_z_accel_tolerance = 3.11607385f;
+                          xy_rot_tolerance = 2.91114068f;
+                          z_rot_tolerance = 3.40372252f;};};
+   LRConfig = {x_grav_high_limit = 6.0467124f;
+               x_grav_low_limit = 4.96847153f;
+               z_grav_zero_tolerance = 1.3238647f;
+               z_grav_Left_thrsld = -4.40392256f;
+               z_grav_right_thrsld = 3.59434295f;};
+   SwipeConfig = {z_accel_front_thrsld = 2.21421123f;
+                  z_accel_back_thrsld = -3.44232178f;
+                  z_accel_avg_front_thrsld = 2.85102463f;
+                  z_accel_avg_back_thrsld = -1.72562742f;
+                  xy_accel_tolerance = 4.35351038f;
+                  avg_over_count = 1.0f;
+                  gstr_time_limit = 462654619L;
+                  xz_rot_tolerance = 3.72308302f;
+                  y_rot_tolerance = 3.81876135f;
+                  SwipeCfg = {gstr_time_limit = 733474002L;
+                              x_accel_tolerance = 4.36390162f;
+                              y_accel_tolerance = 1.68377984f;
+                              ret_x_accel_tolerance = 1.81328452f;
+                              ret_y_accel_tolerance = 2.56743193f;
+                              xz_rot_tolerance = 2.30504012f;
+                              y_rot_tolerance = 2.82958937f;
+                              low_z_accel_limit = 1.11323428f;};};}
+
